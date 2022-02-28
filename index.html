@@ -12,18 +12,26 @@
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- zamienic na randomer -->
-    <title>Randomizer</title>
+    <title>RanDomeRizer</title>
   </head>
   <body>
     <div class="main">
       <div class="main__upperButtonsWrap">
-        <button class="main__addFieldButton">Add field</button>
         <button class="main__addGroupButton">Add group</button>
+        <button class="main__addFieldButton">Add field</button>
+        <button class="main__loadLastSetupButton">Load last setup</button>
       </div>
-      <div class="main__inputList"></div>
+      <div class="main__list">
+        <div class="main__groupsList">
+          <p class="main__groupsListTitle">Groups</p>
+        </div>
+        <div class="main__fieldsList">
+          <p class="main__fieldsListTitle">Fields</p>
+        </div>
+      </div>
       <button class="main__randomizeButton">Randomize</button>
     </div>
+    <div class="main__results"></div>
   </body>
-  <script src="./renderer.js"></script>
+  <script src="./renderer.js" type="module"></script>
 </html>

@@ -1,0 +1,17 @@
+{
+  "fields": [
+    "a",
+    "b",
+    "c"
+  ],
+  "groups": [
+    {
+      "groupName": "aaaa",
+      "groupColor": "#000000"
+    },
+    {
+      "groupName": "bbbb",
+      "groupColor": "#FF0000"
+    }
+  ]
+}

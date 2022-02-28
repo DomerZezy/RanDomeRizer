@@ -1,5 +1,5 @@
 {
-  "name": "randomer",
+  "name": "randomerizer",
   "version": "1.0.0",
   "description": "Name randomizer",
   "main": "main.js",
@@ -9,6 +9,7 @@
   "author": "DomerZezy",
   "license": "MIT",
   "dependencies": {
-    "electron": "^17.1.0"
+    "electron": "^17.1.0",
+    "fs-jetpack": "^4.3.1"
   }
 }
