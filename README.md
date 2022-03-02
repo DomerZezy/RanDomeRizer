@@ -13,5 +13,5 @@
    - **cd RanDomeRizer**
    - **npm i**
 4. Run build command
-   - **npm run package-win** (for now only the Windows version command is written in package.json, **if you know what you're doing**, you can build an app for other versions)
+   - **npm run package-win** (for now only the Windows version command is written in package.json, **if you know what you're doing**, you can build an app for other OS'es)
 5. Voilà, done, your .exe with necessary files will be created in **release-builds** folder
