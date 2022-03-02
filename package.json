@@ -1,15 +1,17 @@
 {
   "name": "randomerizer",
   "version": "1.0.0",
-  "description": "Name randomizer",
+  "description": "Stuff randomizer",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package-win": "electron-packager . randomerizer --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/icon --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"RanDomeRizer\""
   },
   "author": "DomerZezy",
   "license": "MIT",
   "dependencies": {
     "electron": "^17.1.0",
+    "electron-packager": "^15.4.0",
     "fs-jetpack": "^4.3.1"
   }
 }

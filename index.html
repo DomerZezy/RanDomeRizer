@@ -2,16 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-    <meta
-      http-equiv="X-Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <title>RanDomeRizer</title>
   </head>
   <body>
@@ -20,18 +13,25 @@
         <button class="main__addGroupButton">Add group</button>
         <button class="main__addFieldButton">Add field</button>
         <button class="main__loadLastSetupButton">Load last setup</button>
+        <button class="main__loadLastResultButton">Load last result</button>
       </div>
       <div class="main__list">
-        <div class="main__groupsList">
-          <p class="main__groupsListTitle">Groups</p>
-        </div>
-        <div class="main__fieldsList">
-          <p class="main__fieldsListTitle">Fields</p>
-        </div>
+        <div class="main__groupsList"></div>
+        <div class="main__fieldsList"></div>
       </div>
       <button class="main__randomizeButton">Randomize</button>
     </div>
-    <div class="main__results"></div>
+    <div class="main__results">
+      <button class="main__resultsCloseButton" onclick="reloadWindow()">
+        Close
+      </button>
+    </div>
+    <div class="main__blur"></div>
   </body>
+  <script type="text/javascript">
+    const reloadWindow = () => {
+      window.location.reload();
+    };
+  </script>
   <script src="./renderer.js" type="module"></script>
 </html>
