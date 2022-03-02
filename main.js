@@ -4,6 +4,8 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 400,
     height: 600,
+    backgroundColor: "#333333",
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -11,7 +13,10 @@ const createWindow = () => {
   });
 
   win.loadFile("index.html");
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
+  app.on("ready-to-show", () => {
+    win.show;
+  });
 };
 app.whenReady().then(() => {
   createWindow();
