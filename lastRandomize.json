@@ -4,13 +4,6 @@
       "groupName": "Team 1",
       "groupColor": "#00EEFF"
     },
-    "field": "Field 3"
-  },
-  {
-    "group": {
-      "groupName": "Team 1",
-      "groupColor": "#00EEFF"
-    },
     "field": "Field 1"
   },
   {
@@ -18,14 +11,7 @@
       "groupName": "Team 1",
       "groupColor": "#00EEFF"
     },
-    "field": "Field 10"
-  },
-  {
-    "group": {
-      "groupName": "Team 1",
-      "groupColor": "#00EEFF"
-    },
-    "field": "Field 4"
+    "field": "Field 2"
   },
   {
     "group": {
@@ -36,17 +22,17 @@
   },
   {
     "group": {
-      "groupName": "Team 2",
-      "groupColor": "#FF0088"
+      "groupName": "Team 1",
+      "groupColor": "#00EEFF"
     },
-    "field": "Field 9"
+    "field": "Field 8"
   },
   {
     "group": {
-      "groupName": "Team 2",
-      "groupColor": "#FF0088"
+      "groupName": "Team 1",
+      "groupColor": "#00EEFF"
     },
-    "field": "Field 8"
+    "field": "Field 9"
   },
   {
     "group": {
@@ -60,7 +46,7 @@
       "groupName": "Team 2",
       "groupColor": "#FF0088"
     },
-    "field": "Field 2"
+    "field": "Field 4"
   },
   {
     "group": {
@@ -68,5 +54,19 @@
       "groupColor": "#FF0088"
     },
     "field": "Field 5"
+  },
+  {
+    "group": {
+      "groupName": "Team 2",
+      "groupColor": "#FF0088"
+    },
+    "field": "Field 10"
+  },
+  {
+    "group": {
+      "groupName": "Team 2",
+      "groupColor": "#FF0088"
+    },
+    "field": "Field 3"
   }
 ]

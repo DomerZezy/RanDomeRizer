@@ -9,8 +9,60 @@ html {
   overflow-x: hidden;
 }
 
+.navBar {
+  height: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  -webkit-app-region: drag;
+}
+
+.navBar__title {
+  font-weight: bold;
+  padding-left: 8px;
+  color: white;
+}
+
+.navBar__navButtonsWrap {
+  display: flex;
+  width: 60px;
+  height: 100%;
+}
+
+.navBar__navButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 30px;
+  border: none;
+  background-color: #333;
+  -webkit-app-region: no-drag;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.navBar__minimizeButton:hover {
+  background-color: #111;
+}
+
+.navBar__closeButton:hover {
+  background-color: #f00;
+}
+
+.navBar__closeButton > svg {
+  width: 25px;
+  height: 25px;
+}
+
+.navBar__minimizeButton > svg {
+  width: 20px;
+  height: 20px;
+}
+
 .main {
-  height: 100vh;
+  height: calc(100vh - 30px);
   width: 100%;
   background-color: #333;
   overflow-y: auto;

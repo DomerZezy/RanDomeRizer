@@ -1,11 +1,12 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 400,
-    height: 600,
+    width: 390,
+    height: 630,
     backgroundColor: "#333333",
     frame: false,
+    resizable: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -15,7 +16,15 @@ const createWindow = () => {
   win.loadFile("index.html");
   // win.webContents.openDevTools();
   app.on("ready-to-show", () => {
-    win.show;
+    win.show();
+  });
+
+  ipcMain.on("min", () => {
+    win.minimize();
+  });
+
+  ipcMain.on("close", () => {
+    win.close();
   });
 };
 app.whenReady().then(() => {

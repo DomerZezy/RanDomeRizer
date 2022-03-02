@@ -1,5 +1,5 @@
 const { remove, write, exists, read } = require("fs-jetpack");
-const { remote } = require("electron");
+const { ipcRenderer } = require("electron");
 
 const addFieldButton = document.querySelector(".main__addFieldButton");
 const addGroupButton = document.querySelector(".main__addGroupButton");
@@ -30,6 +30,19 @@ const renderResults = (resultsList, groups) => {
   });
 };
 
+window.addEventListener("DOMContentLoaded", () => {
+  const minimizeButton = document.querySelector(".navBar__minimizeButton");
+  const closeButton = document.querySelector(".navBar__closeButton");
+
+  minimizeButton.addEventListener("click", () => {
+    ipcRenderer.send("min");
+  });
+
+  closeButton.addEventListener("click", () => {
+    ipcRenderer.send("close");
+  });
+});
+
 loadLastResultsButton.addEventListener("click", () => {
   if (exists("lastRandomize.json")) {
     const data = read("lastRandomize.json", "json");
@@ -52,13 +65,16 @@ addGroupButton.addEventListener("click", () => {
     groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
     firstGroup = true;
   }
-  groupsList.innerHTML += `
+  groupsList.insertAdjacentHTML(
+    "beforeend",
+    `
   <div class="main__group">
-    <input class="main__groupName" type="text" placeholder="Group name">
-    <input class="main__groupColor" type="text" placeholder="Group color(hex)">
+    <input class="main__groupName" type="text" placeholder="Group name" value="">
+    <input class="main__groupColor" type="text" placeholder="Group color(hex)" value="">
     <button class="main__removeGroupButton">Remove group</button>
   </div>
-  `;
+  `
+  );
   document.querySelectorAll(".main__groupColor").forEach((color) => {
     color.addEventListener("input", (e) => {
       const data = e.target.value;
@@ -84,12 +100,15 @@ addFieldButton.addEventListener("click", () => {
     fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
     firstField = true;
   }
-  fieldsList.innerHTML += `
+  fieldsList.insertAdjacentHTML(
+    "beforeend",
+    `
   <div class="main__field">
-    <input class="main__fieldName" type="text" placeholder="Field name">
+    <input class="main__fieldName" type="text" placeholder="Field name" value="">
     <button class="main__removeFieldButton">Remove field</button>
   </div>
-  `;
+  `
+  );
   document.querySelectorAll(".main__removeFieldButton").forEach((button) => {
     button.addEventListener("click", (e) => {
       if (document.querySelectorAll(".main__field").length === 1) {
@@ -109,22 +128,28 @@ loadLastSetupButton.addEventListener("click", () => {
     const lastSetup = read("lastSetup.json", "json");
     lastSetup.fields.forEach((field) => {
       firstField = true;
-      fieldsList.innerHTML += `
+      fieldsList.insertAdjacentHTML(
+        "beforeend",
+        `
         <div class="main__field">
           <input class="main__fieldName" type="text" placeholder="Field name" value="${field}">
           <button class="main__removeFieldButton">Remove field</button>
         </div>
-      `;
+      `
+      );
     });
     lastSetup.groups.forEach((group) => {
       firstGroup = true;
-      groupsList.innerHTML += `
+      groupsList.insertAdjacentHTML(
+        "beforeend",
+        `
         <div class="main__group">
           <input class="main__groupName" type="text" placeholder="Group name" value="${group.groupName}">
           <input class="main__groupColor" type="text" style="border: 1px solid ${group.groupColor}" placeholder="Group color(hex)" value="${group.groupColor}">
           <button class="main__removeGroupButton">Remove group</button>
         </div>
-        `;
+        `
+      );
     });
   }
   document.querySelectorAll(".main__groupColor").forEach((color) => {
