@@ -2,7 +2,7 @@
 
 ## Open source Electron.JS Stuff randomizer
 
-**Before I find out how to publish releases here's an instruction how to build an .exe**
+**Found out how to do releases, but I'll leave the instructions if someone wants to build .exe on their own**
 
 1. Install [Node.js](https://nodejs.org/en/download/) and [Git](https://git-scm.com/downloads)
 2. Clone this repository
