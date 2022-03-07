@@ -1,6 +1,7 @@
-const { remove, write, exists, read } = require("fs-jetpack");
-const { ipcRenderer } = require("electron");
+const { remove, write, exists, read, file } = require("fs-jetpack");
+const { ipcRenderer } = require("electron"); // needed since remote module got deprecated
 
+// gather all necessary elements
 const addFieldButton = document.querySelector(".main__addFieldButton");
 const addGroupButton = document.querySelector(".main__addGroupButton");
 const groupsList = document.querySelector(".main__groupsList");
@@ -8,16 +9,17 @@ const fieldsList = document.querySelector(".main__fieldsList");
 const randomizeButton = document.querySelector(".main__randomizeButton");
 const results = document.querySelector(".main__results");
 const blur = document.querySelector(".main__blur");
-const loadLastSetupButton = document.querySelector(
-  ".main__loadLastSetupButton"
-);
+const loadSetupButton = document.querySelector(".main__loadSetupButton");
+const saveSetupButton = document.querySelector(".main__saveSetupButton");
 const loadLastResultsButton = document.querySelector(
   ".main__loadLastResultButton"
 );
 
+// for displaying "Groups" and "Fields" after adding fields (those titles shouldn't show multiple times)
 let firstGroup = false;
 let firstField = false;
 
+// rendering results
 const renderResults = (resultsList, groups) => {
   results.style.left = "10%";
   blur.style.left = "0";
@@ -30,6 +32,35 @@ const renderResults = (resultsList, groups) => {
   });
 };
 
+//gathering data from inputs (for randomization and saving setups)
+const gatherData = () => {
+  const fields = [];
+  const groups = [];
+  const allFields = document.querySelectorAll(".main__field");
+  const allGroups = document.querySelectorAll(".main__group");
+
+  // gather data from inputs
+  allFields.forEach((field) => {
+    fields.push(field.querySelector(".main__fieldName").value);
+  });
+  allGroups.forEach((group) => {
+    const groupData = {
+      groupName: group.querySelector(".main__groupName").value,
+      groupColor:
+        group.querySelector(".main__groupColor").value === ""
+          ? "#000000"
+          : group.querySelector(".main__groupColor").value,
+    };
+    groups.push(groupData);
+  });
+  return {
+    type: "RanDomeRizerSetup",
+    fields: fields,
+    groups: groups,
+  };
+};
+
+// adding functionality to titlebar close and minimize buttons
 window.addEventListener("DOMContentLoaded", () => {
   const minimizeButton = document.querySelector(".navBar__minimizeButton");
   const closeButton = document.querySelector(".navBar__closeButton");
@@ -43,9 +74,10 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// loading last results (might remove or replace with manual loading/saving)
 loadLastResultsButton.addEventListener("click", () => {
-  if (exists("lastRandomize.json")) {
-    const data = read("lastRandomize.json", "json");
+  if (exists("results/lastRandomize.json")) {
+    const data = read("results/lastRandomize.json", "json");
     const groups = [];
 
     data.forEach((piece) => {
@@ -60,7 +92,9 @@ loadLastResultsButton.addEventListener("click", () => {
   }
 });
 
+// adding group field
 addGroupButton.addEventListener("click", () => {
+  // check if it's the first group field
   if (!firstGroup) {
     groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
     firstGroup = true;
@@ -75,6 +109,7 @@ addGroupButton.addEventListener("click", () => {
   </div>
   `
   );
+  // adding dynamic group color border change
   document.querySelectorAll(".main__groupColor").forEach((color) => {
     color.addEventListener("input", (e) => {
       const data = e.target.value;
@@ -84,6 +119,7 @@ addGroupButton.addEventListener("click", () => {
     });
   });
 
+  // adding remove group function
   document.querySelectorAll(".main__removeGroupButton").forEach((button) => {
     button.addEventListener("click", (e) => {
       if (document.querySelectorAll(".main__group").length === 1) {
@@ -95,7 +131,10 @@ addGroupButton.addEventListener("click", () => {
   });
 });
 
+//TODO change that field name
+// adding field field
 addFieldButton.addEventListener("click", () => {
+  // check if it's the first field
   if (!firstField) {
     fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
     firstField = true;
@@ -109,6 +148,7 @@ addFieldButton.addEventListener("click", () => {
   </div>
   `
   );
+  // adding remove field function
   document.querySelectorAll(".main__removeFieldButton").forEach((button) => {
     button.addEventListener("click", (e) => {
       if (document.querySelectorAll(".main__field").length === 1) {
@@ -120,13 +160,43 @@ addFieldButton.addEventListener("click", () => {
   });
 });
 
-loadLastSetupButton.addEventListener("click", () => {
-  fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
-  groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
+//save randomization setup to JSON file
+saveSetupButton.addEventListener("click", async () => {
+  const inputData = gatherData();
+  const filePathData = await ipcRenderer.invoke("saveSetupFile");
+  if (filePathData.canceled) return;
 
-  if (exists("lastSetup.json")) {
-    const lastSetup = read("lastSetup.json", "json");
-    lastSetup.fields.forEach((field) => {
+  const filePath = filePathData.filePath;
+  console.log(filePath);
+  if (exists(filePath)) {
+    remove(filePath);
+    write(filePath, inputData);
+  }
+});
+
+//load randomization setup from JSON file
+loadSetupButton.addEventListener("click", async () => {
+  //TODO add some way to validate JSON file, maybe a field like
+  //type: "ranDomeRizerSetup" or smth
+
+  // show file prompt to user and get file data
+  const file = await ipcRenderer.invoke("openSetupFile");
+  // if user canceled file selection, do nothing
+  if (file.canceled) return;
+  // else get file path (multiSelection is off, so only index 0 is needed)
+  const filePath = file.filePaths[0];
+  console.log(!file.canceled ? file.filePaths[0] : null);
+
+  // check if file exists, just in case
+  if (exists(filePath)) {
+    const setup = read(filePath, "json");
+
+    // reset main window content
+    fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
+    groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
+
+    // render fields
+    setup.fields.forEach((field) => {
       firstField = true;
       fieldsList.insertAdjacentHTML(
         "beforeend",
@@ -138,7 +208,9 @@ loadLastSetupButton.addEventListener("click", () => {
       `
       );
     });
-    lastSetup.groups.forEach((group) => {
+
+    // render groups
+    setup.groups.forEach((group) => {
       firstGroup = true;
       groupsList.insertAdjacentHTML(
         "beforeend",
@@ -152,6 +224,8 @@ loadLastSetupButton.addEventListener("click", () => {
       );
     });
   }
+
+  // add border color change to every group field
   document.querySelectorAll(".main__groupColor").forEach((color) => {
     color.addEventListener("input", (e) => {
       const data = e.target.value;
@@ -160,6 +234,8 @@ loadLastSetupButton.addEventListener("click", () => {
       }
     });
   });
+
+  // add remove function to every field field(I need to change that)
   document.querySelectorAll(".main__removeFieldButton").forEach((button) => {
     button.addEventListener("click", (e) => {
       if (document.querySelectorAll(".main__field").length === 1) {
@@ -169,6 +245,8 @@ loadLastSetupButton.addEventListener("click", () => {
       e.target.parentNode.remove();
     });
   });
+
+  // add remove function to every group field
   document.querySelectorAll(".main__removeGroupButton").forEach((button) => {
     button.addEventListener("click", (e) => {
       if (document.querySelectorAll(".main__group").length === 1) {
@@ -180,35 +258,23 @@ loadLastSetupButton.addEventListener("click", () => {
   });
 });
 
+//randomization
 randomizeButton.addEventListener("click", () => {
-  const fields = [];
-  const groups = [];
-  const allFields = document.querySelectorAll(".main__field");
-  const allGroups = document.querySelectorAll(".main__group");
+  const inputData = gatherData();
 
-  allFields.forEach((field) => {
-    fields.push(field.querySelector(".main__fieldName").value);
-  });
-  allGroups.forEach((group) => {
-    const groupData = {
-      groupName: group.querySelector(".main__groupName").value,
-      groupColor:
-        group.querySelector(".main__groupColor").value === ""
-          ? "#000000"
-          : group.querySelector(".main__groupColor").value,
-    };
-    groups.push(groupData);
-  });
+  const groups = inputData.groups;
+  const fields = inputData.fields;
 
   const data = {
     fields: fields,
     groups: groups,
   };
 
-  remove("lastSetup.json");
+  //remove lastSetup file to write a new one (and to avoid appending)
+  remove("setups/lastSetup.json");
+  write("setups/lastSetup.json", data);
 
-  write("lastSetup.json", data);
-
+  // randomization algorithm
   const usedNumbers = [];
   const resultsList = [];
   for (let i = 0; i < groups.length; i++) {
@@ -233,8 +299,9 @@ randomizeButton.addEventListener("click", () => {
     }
   }
 
-  remove("lastRandomize.json");
-  write("lastRandomize.json", resultsList);
+  // remove lastRandomization file to write a new one (and to avoid appending)
+  remove("results/lastRandomize.json");
+  write("results/lastRandomize.json", resultsList);
 
   renderResults(resultsList, groups);
 });
