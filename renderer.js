@@ -1,5 +1,13 @@
 const { remove, write, exists, read, file } = require("fs-jetpack");
 const { ipcRenderer } = require("electron"); // needed since remote module got deprecated
+const Toastify = require("toastify-js");
+const ColorPicker = require("simple-color-picker");
+const AdmZip = require("adm-zip");
+
+const colorPicker = new ColorPicker({
+  color: "#000000",
+  el: document.querySelector(".main__pickerScreen"),
+});
 
 // gather all necessary elements
 const addFieldButton = document.querySelector(".main__addFieldButton");
@@ -14,6 +22,18 @@ const saveSetupButton = document.querySelector(".main__saveSetupButton");
 const loadLastResultsButton = document.querySelector(
   ".main__loadLastResultButton"
 );
+const loadThemeButton = document.querySelector(".main__loadThemeButton");
+
+// toast template
+// Toastify({
+//   text: "test toast",
+//   duration: 2000,
+//   newWindow: true,
+//   close: true,
+//   gravity: "top",
+//   position: "left",
+//   stopOnFocus: true,
+// }).showToast();
 
 // for displaying "Groups" and "Fields" after adding fields (those titles shouldn't show multiple times)
 let firstGroup = false;
@@ -70,6 +90,7 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   closeButton.addEventListener("click", () => {
+    remove("assets/temp");
     ipcRenderer.send("close");
   });
 });
@@ -102,12 +123,12 @@ addGroupButton.addEventListener("click", () => {
   groupsList.insertAdjacentHTML(
     "beforeend",
     `
-  <div class="main__group">
-    <input class="main__groupName" type="text" placeholder="Group name" value="">
-    <input class="main__groupColor" type="text" placeholder="Group color(hex)" value="">
-    <button class="main__removeGroupButton">Remove group</button>
-  </div>
-  `
+    <div class="main__group">
+      <input class="main__groupName" type="text" placeholder="Group name" value="">
+      <input class="main__groupColor" type="text" placeholder="Group color(hex)" value="">
+      <button class="main__removeGroupButton">Remove group</button>
+    </div>
+    `
   );
   // adding dynamic group color border change
   document.querySelectorAll(".main__groupColor").forEach((color) => {
@@ -171,6 +192,8 @@ saveSetupButton.addEventListener("click", async () => {
   if (exists(filePath)) {
     remove(filePath);
     write(filePath, inputData);
+  } else {
+    write(filePath, inputData);
   }
 });
 
@@ -185,11 +208,30 @@ loadSetupButton.addEventListener("click", async () => {
   if (file.canceled) return;
   // else get file path (multiSelection is off, so only index 0 is needed)
   const filePath = file.filePaths[0];
-  console.log(!file.canceled ? file.filePaths[0] : null);
+  // console.log(filePath.split("\\").pop().join("\\"));
 
   // check if file exists, just in case
   if (exists(filePath)) {
     const setup = read(filePath, "json");
+    if (!setup.type || !setup.type === "ranDomeRizerSetup") {
+      Toastify({
+        text: "File is not a setup!",
+        duration: 3000,
+        className: "main__errorToast",
+        gravity: "top",
+        position: "left",
+        stopOnFocus: true,
+        close: true,
+        offset: {
+          y: 10,
+        },
+        style: {
+          background: "#FF0000",
+          maxWidth: "200px",
+        },
+      }).showToast();
+      return;
+    }
 
     // reset main window content
     fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
@@ -304,4 +346,46 @@ randomizeButton.addEventListener("click", () => {
   write("results/lastRandomize.json", resultsList);
 
   renderResults(resultsList, groups);
+});
+
+// load theme
+loadThemeButton.addEventListener("click", async () => {
+  const file = await ipcRenderer.invoke("openThemeFile");
+  if (file.canceled) return;
+
+  const filePath = file.filePaths[0];
+
+  if (exists(filePath)) {
+    const tempFolderPath = "./assets/temp";
+    const themeFolderPath =
+      tempFolderPath +
+      filePath.substring(filePath.lastIndexOf("\\"), filePath.lastIndexOf("."));
+    const zip = new AdmZip(filePath);
+    console.log(filePath, tempFolderPath, themeFolderPath);
+    await zip.extractAllTo(tempFolderPath);
+
+    const config = read(themeFolderPath + "/config.json", "json");
+    console.log(config);
+
+    if (!config.type || config.type !== "randomerizerThemeConfig") {
+      Toastify({
+        text: "Error loading theme!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "left",
+        stopOnFocus: true,
+        style: {
+          background: "#FF0000",
+          maxWidth: "250px",
+        },
+      }).showToast();
+      return;
+    }
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    link.href = themeFolderPath + "/" + config.styleFileName;
+    await document.querySelector("head").appendChild(link);
+  }
 });

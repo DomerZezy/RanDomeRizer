@@ -5,6 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
     <title>RanDomeRizer</title>
   </head>
   <body>
@@ -43,7 +48,10 @@
         <button class="main__addFieldButton">Add field</button>
         <button class="main__loadSetupButton">Load setup</button>
         <button class="main__saveSetupButton">Save setup</button>
-        <button class="main__loadLastResultButton">Load last result</button>
+        <button class="main__loadThemeButton">Load theme</button>
+        <button class="main__loadLastResultButton" style="display: none">
+          Load last result
+        </button>
       </div>
       <div class="main__list">
         <div class="main__groupsList"></div>
@@ -57,6 +65,13 @@
       </button>
     </div>
     <div class="main__blur"></div>
+    <div class="main__pickerScreen">
+      <div class="main__pickerScreenPreview">
+        <p class="main__pickerScreenPreviewText">#000000</p>
+        <div class="main__pickerScreenPreviewColor"></div>
+      </div>
+      <button class="main__pickerScreenAcceptButton"></button>
+    </div>
   </body>
   <script type="text/javascript">
     const reloadWindow = () => {

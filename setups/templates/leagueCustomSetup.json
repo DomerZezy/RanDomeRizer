@@ -1,0 +1,19 @@
+{
+  "type": "RanDomeRizerSetup",
+  "fields": ["", "", "", "", "", "", "", "", "", ""],
+  "groups": [
+    {
+      "groupName": "Team 1",
+      "groupColor": "#0F0"
+    },
+    {
+      "groupName": "Team 2",
+      "groupColor": "#00F"
+    }
+  ],
+  "config": {
+    "visibility": ["noVisibleGroups", "noVisibleButtons"],
+    "fieldPlaceholder": "Summoner's name",
+    "title": "League of Legends Setup"
+  }
+}

@@ -1,20 +1,4 @@
 {
-  "type": "RanDomeRizerSetup",
-  "fields": [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5"
-  ],
-  "groups": [
-    {
-      "groupName": "aaa",
-      "groupColor": "#F00"
-    },
-    {
-      "groupName": "bbb",
-      "groupColor": "#0F0"
-    }
-  ]
+  "fields": [],
+  "groups": []
 }

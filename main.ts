@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { remove } = require("fs-jetpack");
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -15,7 +16,7 @@ const createWindow = () => {
 
   win.loadFile("index.html");
   win.webContents.openDevTools();
-  app.on("ready-to-show", () => {
+  app.on("ready", () => {
     win.show();
   });
 
@@ -38,16 +39,21 @@ const createWindow = () => {
   ipcMain.handle("saveSetupFile", async () => {
     const date = new Date();
     const file = await dialog.showSaveDialog(win, {
-      options: {
-        defaultPath: `./setups/setup-${date.getDate()}-${date.getMonth()}-${
-          date.getFullYear
-        }.json`,
-        filters: [{ name: "JSON file", extensions: "json" }],
-      },
+      defaultPath: `/setups/setup-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}.json`,
+      filters: [{ name: "JSON file", extensions: ["json"] }],
+    });
+    return file;
+  });
+
+  ipcMain.handle("openThemeFile", async () => {
+    const file = await dialog.showOpenDialog(win, {
+      properties: ["openFile"],
+      filters: [{ name: "RDR Theme files", extensions: ["rdrtheme"] }],
     });
     return file;
   });
 };
+
 app.whenReady().then(() => {
   createWindow();
 
