@@ -28,7 +28,7 @@ html {
 
 .navBar__navButtonsWrap {
   display: flex;
-  width: 60px;
+  width: 90px;
   height: 100%;
 }
 
@@ -45,7 +45,8 @@ html {
   transition: 0.3s;
 }
 
-.navBar__minimizeButton:hover {
+.navBar__minimizeButton:hover,
+.navBar__settingsButton:hover {
   background-color: #111;
 }
 
@@ -59,6 +60,11 @@ html {
 }
 
 .navBar__minimizeButton > svg {
+  width: 20px;
+  height: 20px;
+}
+
+.navBar__settingsButton > svg {
   width: 20px;
   height: 20px;
 }

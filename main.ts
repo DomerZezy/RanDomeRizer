@@ -15,7 +15,7 @@ const createWindow = () => {
   });
 
   win.loadFile("index.html");
-  win.webContents.openDevTools();
+  win.webContents.openDevTools({ mode: "detach" });
   app.on("ready", () => {
     win.show();
   });

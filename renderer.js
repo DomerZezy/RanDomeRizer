@@ -1,4 +1,4 @@
-const { remove, write, exists, read, file } = require("fs-jetpack");
+const { remove, write, exists, read, cwd } = require("fs-jetpack");
 const { ipcRenderer } = require("electron"); // needed since remote module got deprecated
 const Toastify = require("toastify-js");
 const ColorPicker = require("simple-color-picker");
@@ -23,6 +23,8 @@ const loadLastResultsButton = document.querySelector(
   ".main__loadLastResultButton"
 );
 const loadThemeButton = document.querySelector(".main__loadThemeButton");
+
+let config;
 
 // toast template
 // Toastify({
@@ -50,6 +52,53 @@ const renderResults = (resultsList, groups) => {
         results.innerHTML += `<p class="main__resultsResult">${result.field}</p>`;
     });
   });
+};
+
+const loadTheme = async (type, themeName = "") => {
+  let file, filePath;
+  if (type === "prompt") {
+    file = await ipcRenderer.invoke("openThemeFile");
+    if (file.canceled) return;
+
+    filePath = file.filePaths[0];
+  } else if (type === "loadFile") {
+    filePath = cwd() + `/assets/themes/${themeName}.rdrtheme`;
+  }
+  console.log(filePath);
+
+  if (exists(filePath)) {
+    const tempFolderPath = cwd() + "/assets/temp";
+    const themeFolderPath =
+      tempFolderPath +
+      filePath.substring(filePath.lastIndexOf("/"), filePath.lastIndexOf("."));
+    const zip = new AdmZip(filePath);
+    console.log(filePath, tempFolderPath, themeFolderPath);
+    await zip.extractAllTo(tempFolderPath);
+
+    const config = read(themeFolderPath + "/config.json", "json");
+    console.log(config);
+
+    if (!config.type || config.type !== "randomerizerThemeConfig") {
+      Toastify({
+        text: "Error loading theme!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "left",
+        stopOnFocus: true,
+        style: {
+          background: "#FF0000",
+          maxWidth: "250px",
+        },
+      }).showToast();
+      return;
+    }
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    link.href = themeFolderPath + "/" + config.styleFileName;
+    await document.querySelector("head").appendChild(link);
+  }
 };
 
 //gathering data from inputs (for randomization and saving setups)
@@ -93,6 +142,15 @@ window.addEventListener("DOMContentLoaded", () => {
     remove("assets/temp");
     ipcRenderer.send("close");
   });
+  if (!exists("config.json")) {
+    config = {
+      theme: "default",
+      noAnim: false,
+    };
+    write("config.json", config);
+  } else {
+    config = read("config.json", "json");
+  }
 });
 
 // loading last results (might remove or replace with manual loading/saving)
@@ -199,21 +257,18 @@ saveSetupButton.addEventListener("click", async () => {
 
 //load randomization setup from JSON file
 loadSetupButton.addEventListener("click", async () => {
-  //TODO add some way to validate JSON file, maybe a field like
-  //type: "ranDomeRizerSetup" or smth
-
   // show file prompt to user and get file data
   const file = await ipcRenderer.invoke("openSetupFile");
   // if user canceled file selection, do nothing
   if (file.canceled) return;
   // else get file path (multiSelection is off, so only index 0 is needed)
   const filePath = file.filePaths[0];
-  // console.log(filePath.split("\\").pop().join("\\"));
 
   // check if file exists, just in case
   if (exists(filePath)) {
     const setup = read(filePath, "json");
-    if (!setup.type || !setup.type === "ranDomeRizerSetup") {
+    console.log(setup.type);
+    if (!setup.type || setup.type !== "RanDomeRizerSetup") {
       Toastify({
         text: "File is not a setup!",
         duration: 3000,
@@ -233,6 +288,8 @@ loadSetupButton.addEventListener("click", async () => {
       return;
     }
 
+    if (setup.config.theme) loadTheme("loadFile", setup.config.theme);
+
     // reset main window content
     fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
     groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
@@ -244,7 +301,11 @@ loadSetupButton.addEventListener("click", async () => {
         "beforeend",
         `
         <div class="main__field">
-          <input class="main__fieldName" type="text" placeholder="Field name" value="${field}">
+          <input class="main__fieldName" type="text" placeholder="${
+            setup.config.fieldPlaceholder
+              ? setup.config.fieldPlaceholder
+              : "Field name"
+          }" value="${field}">
           <button class="main__removeFieldButton">Remove field</button>
         </div>
       `
@@ -349,43 +410,6 @@ randomizeButton.addEventListener("click", () => {
 });
 
 // load theme
-loadThemeButton.addEventListener("click", async () => {
-  const file = await ipcRenderer.invoke("openThemeFile");
-  if (file.canceled) return;
-
-  const filePath = file.filePaths[0];
-
-  if (exists(filePath)) {
-    const tempFolderPath = "./assets/temp";
-    const themeFolderPath =
-      tempFolderPath +
-      filePath.substring(filePath.lastIndexOf("\\"), filePath.lastIndexOf("."));
-    const zip = new AdmZip(filePath);
-    console.log(filePath, tempFolderPath, themeFolderPath);
-    await zip.extractAllTo(tempFolderPath);
-
-    const config = read(themeFolderPath + "/config.json", "json");
-    console.log(config);
-
-    if (!config.type || config.type !== "randomerizerThemeConfig") {
-      Toastify({
-        text: "Error loading theme!",
-        duration: 3000,
-        close: true,
-        gravity: "top",
-        position: "left",
-        stopOnFocus: true,
-        style: {
-          background: "#FF0000",
-          maxWidth: "250px",
-        },
-      }).showToast();
-      return;
-    }
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.type = "text/css";
-    link.href = themeFolderPath + "/" + config.styleFileName;
-    await document.querySelector("head").appendChild(link);
-  }
+loadThemeButton.addEventListener("click", () => {
+  loadTheme("prompt");
 });
