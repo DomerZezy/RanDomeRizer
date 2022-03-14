@@ -1,8 +1,10 @@
 # RanDomeRizer
 
-## Open source Electron.JS Stuff randomizer
+## Stuff randomizer made with Electron
 
-**Found out how to do releases, but I'll leave the instructions if someone wants to build .exe on their own**
+### Keep up with development:
+- [Trello](https://trello.com/b/yZGB1btv/randomerizer)
+- Discord - WIP
 
 1. Install [Node.js](https://nodejs.org/en/download/) and [Git](https://git-scm.com/downloads)
 2. Clone this repository
