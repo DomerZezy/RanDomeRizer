@@ -25,6 +25,11 @@ const loadLastResultsButton = document.querySelector(
 const loadThemeButton = document.querySelector(".main__loadThemeButton");
 
 let config;
+const setupConfig = {
+  type: "ranDomeRizerSetup",
+  fields: [],
+  groups: []
+}
 
 // toast template
 // Toastify({
@@ -54,6 +59,7 @@ const renderResults = (resultsList, groups) => {
   });
 };
 
+//loading a theme
 const loadTheme = async (type, themeName = "") => {
   let file, filePath;
   if (type === "prompt") {
@@ -158,6 +164,18 @@ loadLastResultsButton.addEventListener("click", () => {
   if (exists("results/lastRandomize.json")) {
     const data = read("results/lastRandomize.json", "json");
     const groups = [];
+
+    if(!data.type || data.type !== "ranDomeRizerResult"){
+      new Toastify({
+        text: "File is not a result!",
+        duration: 2000,
+        close: true,
+        stopOnFocus: true,
+        style: {
+          background: "#FF0000"
+        }
+      }).showToast();
+    }
 
     data.forEach((piece) => {
       if (!groups.some((x) => x.groupName === piece.group.groupName)) {
