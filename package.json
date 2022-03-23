@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "adm-zip": "^0.5.9",
+    "animejs": "^3.2.1",
     "electron-packager": "^15.4.0",
     "fs-jetpack": "^4.3.1",
     "simple-color-picker": "^1.0.5",

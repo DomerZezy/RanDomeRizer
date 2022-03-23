@@ -84,9 +84,18 @@ html {
   align-items: center;
 }
 
-.main__upperButtonsWrap > button {
-  width: 25%;
-  height: 100%;
+.main__settingsMenu {
+  display: flex;
+  position: absolute;
+  top: 30px;
+  right: 60px;
+  width: 200px;
+  flex-direction: column;
+}
+
+.main__settingsMenu > button {
+  width: 100%;
+  height: 30px;
   border: none;
   background-color: #222;
   padding: 4px;
@@ -96,7 +105,7 @@ html {
   cursor: pointer;
 }
 
-.main__upperButtonsWrap > button:hover {
+.main__settingsMenu > button:hover {
   background-color: #111;
 }
 

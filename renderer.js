@@ -2,7 +2,7 @@ const { remove, write, exists, read, cwd } = require("fs-jetpack");
 const { ipcRenderer } = require("electron"); // needed since remote module got deprecated
 const Toastify = require("toastify-js");
 const ColorPicker = require("simple-color-picker");
-const AdmZip = require("adm-zip");
+const Anime = require("animejs");
 
 const colorPicker = new ColorPicker({
   color: "#000000",
@@ -22,8 +22,11 @@ const saveSetupButton = document.querySelector(".main__saveSetupButton");
 const loadLastResultsButton = document.querySelector(
   ".main__loadLastResultButton"
 );
+const settingsButton = document.querySelector(".main__settingsButton");
 
 let config;
+let inputFocused = false;
+let menuOpened = false;
 
 // toast template
 // Toastify({
@@ -51,6 +54,136 @@ const renderResults = (resultsList, groups) => {
         results.innerHTML += `<p class="main__resultsResult">${result.field}</p>`;
     });
   });
+};
+
+const randomize = () => {
+  const inputData = gatherData();
+
+  const groups = inputData.groups;
+  const fields = inputData.fields;
+
+  const data = {
+    fields: fields,
+    groups: groups,
+  };
+
+  //remove lastSetup file to write a new one (and to avoid appending)
+  remove("setups/lastSetup.json");
+  write("setups/lastSetup.json", data);
+
+  // randomization algorithm
+  const usedNumbers = [];
+  const resultsList = [];
+  for (let i = 0; i < groups.length; i++) {
+    for (let j = 0; j < Math.ceil(fields.length / groups.length); j++) {
+      let done = false;
+      while (!done) {
+        const randomNumber = Math.floor(Math.random() * fields.length);
+        if (usedNumbers.length === fields.length) {
+          done = true;
+          continue;
+        }
+        if (!usedNumbers.some((x) => x === randomNumber)) {
+          usedNumbers.push(randomNumber);
+          const result = {
+            group: groups[i],
+            field: fields[randomNumber],
+          };
+          resultsList.push(result);
+          done = true;
+        }
+      }
+    }
+  }
+
+  // remove lastRandomization file to write a new one (and to avoid appending)
+  remove("results/lastRandomize.json");
+  write("results/lastRandomize.json", resultsList);
+
+  renderResults(resultsList, groups);
+};
+
+const handleFocus = () => {
+  const fields = document.querySelectorAll("input[type=text]");
+  fields.forEach((field) => {
+    field.addEventListener("focus", () => {
+      inputFocused = true;
+    });
+    field.addEventListener("blur", () => {
+      inputFocused = false;
+    });
+  });
+};
+
+const addField = () => {
+  // check if it's the first field
+  if (!firstField) {
+    fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
+    firstField = true;
+  }
+  fieldsList.insertAdjacentHTML(
+    "beforeend",
+    `
+    <div class="main__field">
+      <input class="main__fieldName" type="text" placeholder="Field name" value="">
+      <button class="main__removeFieldButton">Remove field</button>
+    </div>
+    `
+  );
+  // adding remove field function
+  document.querySelectorAll(".main__removeFieldButton").forEach((button) => {
+    button.addEventListener("click", (e) => {
+      if (document.querySelectorAll(".main__field").length === 1) {
+        firstField = false;
+        document.querySelector(".main__fieldsListTitle").remove();
+      }
+      e.target.parentNode.remove();
+    });
+  });
+  handleFocus();
+};
+
+settingsButton.addEventListener("click", () => {
+  menuOpened = !menuOpened;
+});
+
+const addGroup = () => {
+  // check if it's the first group field
+  if (!firstGroup) {
+    groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
+    firstGroup = true;
+  }
+  groupsList.insertAdjacentHTML(
+    "beforeend",
+    `
+    <div class="main__group">
+      <input class="main__groupName" type="text" placeholder="Group name" value="">
+      <input class="main__groupColor" type="text" placeholder="Group color(hex)" value="">
+      <button class="main__removeGroupButton">Remove group</button>
+    </div>
+    `
+  );
+  // adding dynamic group color border change
+  document.querySelectorAll(".main__groupColor").forEach((color) => {
+    color.addEventListener("input", (e) => {
+      const data = e.target.value;
+      if (data.length === 4 || (data.length === 7 && data.charAt(0) === "#")) {
+        e.target.style.border = `1px solid ${data}`;
+      }
+    });
+  });
+
+  // adding remove group function
+  document.querySelectorAll(".main__removeGroupButton").forEach((button) => {
+    button.addEventListener("click", (e) => {
+      if (document.querySelectorAll(".main__group").length === 1) {
+        firstGroup = false;
+        document.querySelector(".main__groupsListTitle").remove();
+      }
+      e.target.parentNode.remove();
+    });
+  });
+  handleFocus();
 };
 
 //gathering data from inputs (for randomization and saving setups)
@@ -98,10 +231,37 @@ window.addEventListener("DOMContentLoaded", () => {
     config = {
       theme: "default",
       noAnim: false,
+      keyBindings: {
+        addGroup: "g",
+        addField: "f",
+      },
     };
     write("config.json", config);
   } else {
     config = read("config.json", "json");
+  }
+});
+
+// key bindings
+window.addEventListener("keyup", (e) => {
+  if (inputFocused) return;
+
+  switch (e.key.toLowerCase()) {
+    case config.keyBindings.addGroup: {
+      addGroup();
+      break;
+    }
+    case config.keyBindings.addField: {
+      addField();
+      break;
+    }
+    case config.keyBindings.randomize: {
+      randomize();
+      break;
+    }
+    default: {
+      return;
+    }
   }
 });
 
@@ -125,70 +285,13 @@ loadLastResultsButton.addEventListener("click", () => {
 
 // adding group field
 addGroupButton.addEventListener("click", () => {
-  // check if it's the first group field
-  if (!firstGroup) {
-    groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
-    firstGroup = true;
-  }
-  groupsList.insertAdjacentHTML(
-    "beforeend",
-    `
-    <div class="main__group">
-      <input class="main__groupName" type="text" placeholder="Group name" value="">
-      <input class="main__groupColor" type="text" placeholder="Group color(hex)" value="">
-      <button class="main__removeGroupButton">Remove group</button>
-    </div>
-    `
-  );
-  // adding dynamic group color border change
-  document.querySelectorAll(".main__groupColor").forEach((color) => {
-    color.addEventListener("input", (e) => {
-      const data = e.target.value;
-      if (data.length === 4 || (data.length === 7 && data.charAt(0) === "#")) {
-        e.target.style.border = `1px solid ${data}`;
-      }
-    });
-  });
-
-  // adding remove group function
-  document.querySelectorAll(".main__removeGroupButton").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      if (document.querySelectorAll(".main__group").length === 1) {
-        firstGroup = false;
-        document.querySelector(".main__groupsListTitle").remove();
-      }
-      e.target.parentNode.remove();
-    });
-  });
+  addGroup();
 });
 
 //TODO change that field name
 // adding field field
 addFieldButton.addEventListener("click", () => {
-  // check if it's the first field
-  if (!firstField) {
-    fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
-    firstField = true;
-  }
-  fieldsList.insertAdjacentHTML(
-    "beforeend",
-    `
-  <div class="main__field">
-    <input class="main__fieldName" type="text" placeholder="Field name" value="">
-    <button class="main__removeFieldButton">Remove field</button>
-  </div>
-  `
-  );
-  // adding remove field function
-  document.querySelectorAll(".main__removeFieldButton").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      if (document.querySelectorAll(".main__field").length === 1) {
-        firstField = false;
-        document.querySelector(".main__fieldsListTitle").remove();
-      }
-      e.target.parentNode.remove();
-    });
-  });
+  addField();
 });
 
 //save randomization setup to JSON file
@@ -198,7 +301,6 @@ saveSetupButton.addEventListener("click", async () => {
   if (filePathData.canceled) return;
 
   const filePath = filePathData.filePath;
-  console.log(filePath);
   if (exists(filePath)) {
     remove(filePath);
     write(filePath, inputData);
@@ -219,7 +321,6 @@ loadSetupButton.addEventListener("click", async () => {
   // check if file exists, just in case
   if (exists(filePath)) {
     const setup = read(filePath, "json");
-    console.log(setup.type);
     if (!setup.type || setup.type !== "RanDomeRizerSetup") {
       Toastify({
         text: "File is not a setup!",
@@ -313,48 +414,5 @@ loadSetupButton.addEventListener("click", async () => {
 
 //randomization
 randomizeButton.addEventListener("click", () => {
-  const inputData = gatherData();
-
-  const groups = inputData.groups;
-  const fields = inputData.fields;
-
-  const data = {
-    fields: fields,
-    groups: groups,
-  };
-
-  //remove lastSetup file to write a new one (and to avoid appending)
-  remove("setups/lastSetup.json");
-  write("setups/lastSetup.json", data);
-
-  // randomization algorithm
-  const usedNumbers = [];
-  const resultsList = [];
-  for (let i = 0; i < groups.length; i++) {
-    for (let j = 0; j < Math.ceil(fields.length / groups.length); j++) {
-      let done = false;
-      while (!done) {
-        const randomNumber = Math.floor(Math.random() * fields.length);
-        if (usedNumbers.length === fields.length) {
-          done = true;
-          continue;
-        }
-        if (!usedNumbers.some((x) => x === randomNumber)) {
-          usedNumbers.push(randomNumber);
-          const result = {
-            group: groups[i],
-            field: fields[randomNumber],
-          };
-          resultsList.push(result);
-          done = true;
-        }
-      }
-    }
-  }
-
-  // remove lastRandomization file to write a new one (and to avoid appending)
-  remove("results/lastRandomize.json");
-  write("results/lastRandomize.json", resultsList);
-
-  renderResults(resultsList, groups);
+  randomize();
 });

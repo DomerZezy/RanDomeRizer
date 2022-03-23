@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "group": {
+      "groupName": "a",
+      "groupColor": "#000000"
+    },
+    "field": "4"
+  },
+  {
+    "group": {
+      "groupName": "a",
+      "groupColor": "#000000"
+    },
+    "field": "2"
+  },
+  {
+    "group": {
+      "groupName": "b",
+      "groupColor": "#000000"
+    },
+    "field": "1"
+  },
+  {
+    "group": {
+      "groupName": "b",
+      "groupColor": "#000000"
+    },
+    "field": "3"
+  }
+]

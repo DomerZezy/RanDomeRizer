@@ -1,4 +1,18 @@
 {
-  "fields": [],
-  "groups": []
+  "fields": [
+    "1",
+    "2",
+    "3",
+    "4"
+  ],
+  "groups": [
+    {
+      "groupName": "a",
+      "groupColor": "#000000"
+    },
+    {
+      "groupName": "b",
+      "groupColor": "#000000"
+    }
+  ]
 }
