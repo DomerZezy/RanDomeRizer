@@ -22,7 +22,6 @@ const saveSetupButton = document.querySelector(".main__saveSetupButton");
 const loadLastResultsButton = document.querySelector(
   ".main__loadLastResultButton"
 );
-const loadThemeButton = document.querySelector(".main__loadThemeButton");
 
 let config;
 
@@ -52,53 +51,6 @@ const renderResults = (resultsList, groups) => {
         results.innerHTML += `<p class="main__resultsResult">${result.field}</p>`;
     });
   });
-};
-
-const loadTheme = async (type, themeName = "") => {
-  let file, filePath;
-  if (type === "prompt") {
-    file = await ipcRenderer.invoke("openThemeFile");
-    if (file.canceled) return;
-
-    filePath = file.filePaths[0];
-  } else if (type === "loadFile") {
-    filePath = cwd() + `/assets/themes/${themeName}.rdrtheme`;
-  }
-  console.log(filePath);
-
-  if (exists(filePath)) {
-    const tempFolderPath = cwd() + "/assets/temp";
-    const themeFolderPath =
-      tempFolderPath +
-      filePath.substring(filePath.lastIndexOf("/"), filePath.lastIndexOf("."));
-    const zip = new AdmZip(filePath);
-    console.log(filePath, tempFolderPath, themeFolderPath);
-    await zip.extractAllTo(tempFolderPath);
-
-    const config = read(themeFolderPath + "/config.json", "json");
-    console.log(config);
-
-    if (!config.type || config.type !== "randomerizerThemeConfig") {
-      Toastify({
-        text: "Error loading theme!",
-        duration: 3000,
-        close: true,
-        gravity: "top",
-        position: "left",
-        stopOnFocus: true,
-        style: {
-          background: "#FF0000",
-          maxWidth: "250px",
-        },
-      }).showToast();
-      return;
-    }
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.type = "text/css";
-    link.href = themeFolderPath + "/" + config.styleFileName;
-    await document.querySelector("head").appendChild(link);
-  }
 };
 
 //gathering data from inputs (for randomization and saving setups)
@@ -288,8 +240,6 @@ loadSetupButton.addEventListener("click", async () => {
       return;
     }
 
-    if (setup.config.theme) loadTheme("loadFile", setup.config.theme);
-
     // reset main window content
     fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
     groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
@@ -407,9 +357,4 @@ randomizeButton.addEventListener("click", () => {
   write("results/lastRandomize.json", resultsList);
 
   renderResults(resultsList, groups);
-});
-
-// load theme
-loadThemeButton.addEventListener("click", () => {
-  loadTheme("prompt");
 });

@@ -44,14 +44,6 @@ const createWindow = () => {
     });
     return file;
   });
-
-  ipcMain.handle("openThemeFile", async () => {
-    const file = await dialog.showOpenDialog(win, {
-      properties: ["openFile"],
-      filters: [{ name: "RDR Theme files", extensions: ["rdrtheme"] }],
-    });
-    return file;
-  });
 };
 
 app.whenReady().then(() => {
