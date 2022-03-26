@@ -1,6 +1,6 @@
 {
   "name": "randomerizer",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "Stuff randomizer",
   "main": "main.ts",
   "scripts": {

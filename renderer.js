@@ -18,6 +18,7 @@ const addGroupButton = document.querySelector(".main__addGroupButton");
 const saveSetupButton = document.querySelector(".main__saveSetupButton");
 const saveResultsButton = document.querySelector(".main__saveResultsButton");
 const loadResultsButton = document.querySelector(".main__loadResultsButton");
+const resetButton = document.querySelector(".main__resetButton");
 
 const loadSetupButton = document.querySelector(".main__loadSetupButton");
 const groupsList = document.querySelector(".main__groupsList");
@@ -174,7 +175,7 @@ const loadResults = async () => {
     const resultsFile = read(filePath, "json");
     if (!resultsFile.type || resultsFile.type !== "RanDomeRizerResults") {
       Toastify({
-        text: "File is not a setup!",
+        text: "File is not a result!",
         duration: 3000,
         className: "main__errorToast",
         gravity: "top",
@@ -197,10 +198,18 @@ const loadResults = async () => {
 
 //gathering data from inputs (for randomization and saving setups)
 const gatherData = () => {
+  const date = new Date();
+  const y = date.getFullYear();
+  const m = date.getMonth() < 10 ? `0${date.getMonth() + 1}` : date.getMonth();
+  const d = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
   return {
     type: "RanDomeRizerSetup",
     fields: setup.fields,
     groups: setup.groups,
+    config: {
+      visibility: [],
+      title: `${d}.${m}.${y}`,
+    },
   };
 };
 
@@ -211,8 +220,13 @@ const randomize = () => {
   const fields = inputData.fields;
 
   const data = {
+    type: "RanDomeRizerSetup",
     fields: fields,
     groups: groups,
+    config: {
+      visibility: [],
+      title: "Last setup",
+    },
   };
 
   //remove lastSetup file to write a new one (and to avoid appending)
@@ -322,7 +336,10 @@ const loadSetup = async () => {
     });
 
     // render groups
-    if (!setup.config.visibility.some((x) => x === "noVisibleGroups")) {
+    if (
+      !setup.config.visibility ||
+      !setup.config.visibility.some((x) => x === "noVisibleGroups")
+    ) {
       groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
       setupFile.groups.forEach((group) => {
         firstGroup = true;
@@ -572,4 +589,8 @@ saveResultsButton.addEventListener("click", () => {
 
 loadResultsButton.addEventListener("click", () => {
   loadResults();
+});
+
+resetButton.addEventListener("click", () => {
+  window.location.reload();
 });

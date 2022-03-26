@@ -15,7 +15,7 @@ const createWindow = () => {
   });
 
   win.loadFile("index.html");
-  win.webContents.openDevTools({ mode: "detach" });
+  // win.webContents.openDevTools({ mode: "detach" });
   app.on("ready", () => {
     win.show();
   });
@@ -39,7 +39,9 @@ const createWindow = () => {
   ipcMain.handle("saveSetupFile", async () => {
     const date = new Date();
     const file = await dialog.showSaveDialog(win, {
-      defaultPath: `/setups/setup-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}.json`,
+      defaultPath: `/setups/setup-${date.getDate()}-${
+        date.getMonth() + 1
+      }-${date.getFullYear()}.json`,
       filters: [{ name: "JSON file", extensions: ["json"] }],
     });
     return file;
@@ -48,7 +50,9 @@ const createWindow = () => {
   ipcMain.handle("saveResultsFile", async () => {
     const date = new Date();
     const file = await dialog.showSaveDialog(win, {
-      defaultPath: `/results/results-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}.json`,
+      defaultPath: `/results/results-${date.getDate()}-${
+        date.getMonth() + 1
+      }-${date.getFullYear()}.json`,
       filters: [{ name: "JSON file", extensions: ["json"] }],
     });
     return file;
