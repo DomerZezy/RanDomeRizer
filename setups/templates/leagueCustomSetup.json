@@ -1,17 +1,6 @@
 {
   "type": "RanDomeRizerSetup",
-  "fields": [
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    ""
-  ],
+  "fields": ["", "", "", "", "", "", "", "", "", ""],
   "groups": [
     {
       "groupName": "Team 1",
@@ -23,7 +12,8 @@
     }
   ],
   "config": {
-    "visibility": [],
-    "title": "Last setup"
+    "visibility": ["noVisibleGroups"],
+    "fieldPlaceholder": "Summoner's name",
+    "title": "League of Legends"
   }
 }

@@ -1,17 +1,26 @@
 {
   "name": "randomerizer",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "Stuff randomizer",
-  "main": "main.js",
+  "main": "main.ts",
   "scripts": {
     "start": "electron .",
+    "linux-start": "electron . --no-sandbox",
     "package-win": "electron-packager . randomerizer --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/icon --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"RanDomeRizer\""
   },
+  "type": "module",
   "author": "DomerZezy",
   "license": "MIT",
   "dependencies": {
-    "electron": "^17.1.0",
+    "adm-zip": "^0.5.9",
+    "animejs": "^3.2.1",
     "electron-packager": "^15.4.0",
-    "fs-jetpack": "^4.3.1"
+    "fs-jetpack": "^4.3.1",
+    "simple-color-picker": "^1.0.5",
+    "toastify-js": "^1.11.2"
+  },
+  "devDependencies": {
+    "electron": "17.1.0",
+    "typescript": "^4.6.2"
   }
 }
