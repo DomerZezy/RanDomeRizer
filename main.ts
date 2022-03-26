@@ -44,6 +44,23 @@ const createWindow = () => {
     });
     return file;
   });
+
+  ipcMain.handle("saveResultsFile", async () => {
+    const date = new Date();
+    const file = await dialog.showSaveDialog(win, {
+      defaultPath: `/results/results-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}.json`,
+      filters: [{ name: "JSON file", extensions: ["json"] }],
+    });
+    return file;
+  });
+
+  ipcMain.handle("openResultsFile", async () => {
+    const file = await dialog.showOpenDialog(win, {
+      properties: ["openFile"],
+      filters: [{ name: "JSON files", extensions: ["json"] }],
+    });
+    return file;
+  });
 };
 
 app.whenReady().then(() => {

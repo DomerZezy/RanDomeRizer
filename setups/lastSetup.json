@@ -3,16 +3,22 @@
     "1",
     "2",
     "3",
-    "4"
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10"
   ],
   "groups": [
     {
-      "groupName": "a",
-      "groupColor": "#000000"
+      "groupName": "Team 1",
+      "groupColor": "#0F0"
     },
     {
-      "groupName": "b",
-      "groupColor": "#000000"
+      "groupName": "Team 2",
+      "groupColor": "#00F"
     }
   ]
 }

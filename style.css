@@ -18,6 +18,7 @@ html {
   justify-content: space-between;
   align-items: center;
   -webkit-app-region: drag;
+  background-color: #222;
 }
 
 .navBar__title {
@@ -39,7 +40,7 @@ html {
   height: 30px;
   width: 30px;
   border: none;
-  background-color: #333;
+  background-color: #222;
   -webkit-app-region: no-drag;
   cursor: pointer;
   transition: 0.3s;
@@ -85,19 +86,20 @@ html {
 }
 
 .main__settingsMenu {
-  display: flex;
+  display: none;
   position: absolute;
   top: 30px;
   right: 60px;
   width: 200px;
   flex-direction: column;
+  opacity: 0;
 }
 
 .main__settingsMenu > button {
   width: 100%;
   height: 30px;
   border: none;
-  background-color: #222;
+  background-color: #444;
   padding: 4px;
   font-size: 0.9em;
   color: white;
@@ -111,7 +113,7 @@ html {
 
 .main__list {
   width: 100%;
-  height: calc(100% - 100px);
+  height: calc(100% - 82px);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -269,4 +271,37 @@ html {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.main__loadSetupButton {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 32px;
+  border: none;
+  background-color: transparent;
+  background-color: #222;
+  color: white;
+  font-size: 20px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.main__loadSetupButton:hover {
+  background-color: #111;
+}
+
+.main__setupTitle {
+  width: 20%;
+  height: 100%;
+  padding-left: 8px;
+  text-align: left;
+  font-size: 16px;
+  line-height: 32px;
+}
+
+.main__setupText {
+  width: 80%;
+  height: 100%;
+  line-height: 32px;
 }

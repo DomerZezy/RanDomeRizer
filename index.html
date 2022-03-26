@@ -54,11 +54,10 @@
       </div>
     </div>
     <div class="main">
-      <div class="main__upperButtonsWrap">
-        <button class="main__loadSetupButton">
-          Setup: <span class="main__setupText"></span>
-        </button>
-      </div>
+      <button class="main__loadSetupButton">
+        <span class="main__setupTitle">Setup: </span
+        ><span class="main__setupText">none</span>
+      </button>
       <div class="main__list">
         <div class="main__groupsList"></div>
         <div class="main__fieldsList"></div>
@@ -66,9 +65,7 @@
       <button class="main__randomizeButton">Randomize</button>
     </div>
     <div class="main__results">
-      <button class="main__resultsCloseButton" onclick="reloadWindow()">
-        Close
-      </button>
+      <button class="main__resultsCloseButton">Close</button>
     </div>
     <div class="main__blur"></div>
     <div class="main__pickerScreen">
@@ -81,17 +78,10 @@
     <div class="main__settingsMenu">
       <button class="main__addGroupButton">Add group</button>
       <button class="main__addFieldButton">Add field</button>
-      <button class="main__loadSetupButton">Load setup</button>
       <button class="main__saveSetupButton">Save setup</button>
-      <button class="main__loadLastResultButton" style="display: none">
-        Load last result
-      </button>
+      <button class="main__saveResultsButton">Save results</button>
+      <button class="main__loadResultsButton">Load results</button>
     </div>
   </body>
-  <script type="text/javascript">
-    const reloadWindow = () => {
-      window.location.reload();
-    };
-  </script>
   <script src="./renderer.js" type="module"></script>
 </html>

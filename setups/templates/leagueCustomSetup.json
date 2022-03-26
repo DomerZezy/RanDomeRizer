@@ -12,8 +12,8 @@
     }
   ],
   "config": {
-    "visibility": ["noVisibleGroups", "noVisibleButtons"],
+    "visibility": ["noVisibleGroups"],
     "fieldPlaceholder": "Summoner's name",
-    "title": "League of Legends Setup"
+    "title": "League of Legends"
   }
 }

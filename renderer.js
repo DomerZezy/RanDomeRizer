@@ -10,50 +10,198 @@ const colorPicker = new ColorPicker({
 });
 
 // gather all necessary elements
+const settingsButton = document.querySelector(".navBar__settingsButton");
+
+const menu = document.querySelector(".main__settingsMenu");
 const addFieldButton = document.querySelector(".main__addFieldButton");
 const addGroupButton = document.querySelector(".main__addGroupButton");
+const saveSetupButton = document.querySelector(".main__saveSetupButton");
+const saveResultsButton = document.querySelector(".main__saveResultsButton");
+const loadResultsButton = document.querySelector(".main__loadResultsButton");
+
+const loadSetupButton = document.querySelector(".main__loadSetupButton");
 const groupsList = document.querySelector(".main__groupsList");
 const fieldsList = document.querySelector(".main__fieldsList");
 const randomizeButton = document.querySelector(".main__randomizeButton");
+
 const results = document.querySelector(".main__results");
 const blur = document.querySelector(".main__blur");
-const loadSetupButton = document.querySelector(".main__loadSetupButton");
-const saveSetupButton = document.querySelector(".main__saveSetupButton");
-const loadLastResultsButton = document.querySelector(
-  ".main__loadLastResultButton"
-);
-const settingsButton = document.querySelector(".main__settingsButton");
+
+const setup = {
+  groups: [],
+  fields: [],
+  config: {},
+};
+
+const closeResultsButton = document.querySelector(".main__resultsCloseButton");
 
 let config;
 let inputFocused = false;
 let menuOpened = false;
 
-// toast template
-// Toastify({
-//   text: "test toast",
-//   duration: 2000,
-//   newWindow: true,
-//   close: true,
-//   gravity: "top",
-//   position: "left",
-//   stopOnFocus: true,
-// }).showToast();
+let resultsObject;
 
 // for displaying "Groups" and "Fields" after adding fields (those titles shouldn't show multiple times)
 let firstGroup = false;
 let firstField = false;
 
 // rendering results
-const renderResults = (resultsList, groups) => {
+const renderResults = (resultsList) => {
   results.style.left = "10%";
   blur.style.left = "0";
-  groups.forEach((group) => {
+
+  results.innerHTML = `<button class="main__resultsCloseButton">Close</button>`;
+
+  setup.groups.forEach((group) => {
     results.innerHTML += `<h2 class="main__resultsTitle" style="color: ${group.groupColor};">${group.groupName}</h2>`;
     resultsList.forEach((result) => {
       if (result.group.groupName === group.groupName)
         results.innerHTML += `<p class="main__resultsResult">${result.field}</p>`;
     });
   });
+  document
+    .querySelector(".main__resultsCloseButton")
+    .addEventListener("click", () => {
+      results.style.left = "100%";
+      blur.style.left = "100%";
+    });
+};
+
+const handleChange = () => {
+  const fields = document.querySelectorAll(".main__fieldName");
+  const groupsName = document.querySelectorAll(".main__groupName");
+  const groupsColor = document.querySelectorAll(".main__groupColor");
+
+  fields.forEach((field, index) => {
+    field.setAttribute("pos", index);
+    if (!field.hasAttribute("event-input")) {
+      field.setAttribute("event-input", true);
+      field.addEventListener("input", (e) => {
+        setup.fields[parseInt(field.getAttribute("pos"))] = e.target.value;
+      });
+    }
+  });
+  groupsName.forEach((field, index) => {
+    field.setAttribute("pos", index);
+    if (!field.hasAttribute("event-input")) {
+      field.setAttribute("event-input", true);
+      field.addEventListener("input", (e) => {
+        setup.groups[parseInt(field.getAttribute("pos"))].groupName =
+          e.target.value;
+      });
+    }
+  });
+  groupsColor.forEach((field, index) => {
+    field.setAttribute("pos", index);
+    if (!field.hasAttribute("event-input")) {
+      field.setAttribute("event-input", true);
+      field.addEventListener("input", (e) => {
+        setup.groups[parseInt(field.getAttribute("pos"))].groupColor =
+          e.target.value;
+        console.log(setup.groups, setup.fields);
+      });
+    }
+  });
+};
+
+const addRemoveFuncFields = () => {
+  document.querySelectorAll(".main__removeFieldButton").forEach((button) => {
+    if (!button.hasAttribute("event-click")) {
+      button.setAttribute("event-click", true);
+      button.addEventListener("click", (e) => {
+        e.target.parentNode.remove();
+        setup.fields.splice(
+          parseInt(
+            e.target.parentNode
+              .querySelector(".main__fieldName")
+              .getAttribute("pos")
+          ),
+          1
+        );
+        handleChange();
+        if (document.querySelectorAll(".main__field").length === 0) {
+          firstField = false;
+          document.querySelector(".main__fieldsListTitle").remove();
+        }
+      });
+    }
+  });
+};
+
+const addRemoveFuncGroups = () => {
+  document.querySelectorAll(".main__removeGroupButton").forEach((button) => {
+    button.addEventListener("click", (e) => {
+      e.target.parentNode.remove();
+      setup.groups.splice(
+        parseInt(
+          e.target.parentNode
+            .querySelector(".main__groupName")
+            .getAttribute("pos")
+        ),
+        1
+      );
+      handleChange();
+      if (document.querySelectorAll(".main__group").length === 0) {
+        console.log("remove title called");
+        firstGroup = false;
+        try {
+          document.querySelector(".main__groupsListTitle").remove();
+        } catch (e) {}
+      }
+    });
+  });
+};
+
+const saveResults = async () => {
+  const filePathData = await ipcRenderer.invoke("saveResultsFile");
+  if (filePathData.canceled) return;
+
+  const filePath = filePathData.filePath;
+  if (exists(filePath)) {
+    remove(filePath);
+    write(filePath, resultsObject);
+  } else {
+    write(filePath, resultsObject);
+  }
+};
+
+const loadResults = async () => {
+  const file = await ipcRenderer.invoke("openResultsFile");
+  if (file.canceled) return;
+  const filePath = file.filePaths[0];
+
+  if (exists(filePath)) {
+    const resultsFile = read(filePath, "json");
+    if (!resultsFile.type || resultsFile.type !== "RanDomeRizerResults") {
+      Toastify({
+        text: "File is not a setup!",
+        duration: 3000,
+        className: "main__errorToast",
+        gravity: "top",
+        position: "left",
+        stopOnFocus: true,
+        close: true,
+        offset: {
+          y: 10,
+        },
+        style: {
+          background: "#FF0000",
+          maxWidth: "200px",
+        },
+      }).showToast();
+      return;
+    }
+    renderResults(resultsFile.results, resultsFile.groups);
+  }
+};
+
+//gathering data from inputs (for randomization and saving setups)
+const gatherData = () => {
+  return {
+    type: "RanDomeRizerSetup",
+    fields: setup.fields,
+    groups: setup.groups,
+  };
 };
 
 const randomize = () => {
@@ -96,11 +244,129 @@ const randomize = () => {
     }
   }
 
+  resultsObject = {
+    type: "RanDomeRizerResults",
+    results: resultsList,
+    groups: groups,
+  };
+
   // remove lastRandomization file to write a new one (and to avoid appending)
   remove("results/lastRandomize.json");
-  write("results/lastRandomize.json", resultsList);
+  write("results/lastRandomize.json", resultsObject);
 
   renderResults(resultsList, groups);
+};
+const loadSetup = async () => {
+  // show file prompt to user and get file data
+  const file = await ipcRenderer.invoke("openSetupFile");
+  // if user canceled file selection, do nothing
+  if (file.canceled) return;
+  // else get file path (multiSelection is off, so only index 0 is needed)
+  const filePath = file.filePaths[0];
+
+  // check if file exists, just in case
+  if (exists(filePath)) {
+    const setupFile = read(filePath, "json");
+    if (!setupFile.type || setupFile.type !== "RanDomeRizerSetup") {
+      Toastify({
+        text: "File is not a setup!",
+        duration: 3000,
+        className: "main__errorToast",
+        gravity: "top",
+        position: "left",
+        stopOnFocus: true,
+        close: true,
+        offset: {
+          y: 10,
+        },
+        style: {
+          background: "#FF0000",
+          maxWidth: "200px",
+        },
+      }).showToast();
+      return;
+    }
+
+    // reset main window content
+    fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
+
+    //show setup title
+    loadSetupButton.querySelector(".main__setupText").textContent =
+      setupFile.config.title;
+
+    setup.fields = setupFile.fields;
+    setup.groups = setupFile.groups;
+    setup.config = setupFile.config;
+
+    console.log(setup);
+
+    fieldsList.innerHTML = "";
+    groupsList.innerHTML = "";
+
+    // render fields
+    setupFile.fields.forEach((field) => {
+      firstField = true;
+      fieldsList.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div class="main__field">
+          <input class="main__fieldName" type="text" placeholder="${
+            setupFile.config.fieldPlaceholder
+              ? setupFile.config.fieldPlaceholder
+              : "Field name"
+          }" value="${field}">
+          <button class="main__removeFieldButton">Remove field</button>
+        </div>
+      `
+      );
+    });
+
+    // render groups
+    if (!setup.config.visibility.some((x) => x === "noVisibleGroups")) {
+      groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
+      setupFile.groups.forEach((group) => {
+        firstGroup = true;
+        groupsList.insertAdjacentHTML(
+          "beforeend",
+          `
+        <div class="main__group">
+          <input class="main__groupName" type="text" placeholder="Group name" value="${group.groupName}">
+          <input class="main__groupColor" type="text" style="border: 1px solid ${group.groupColor}" placeholder="Group color(hex)" value="${group.groupColor}">
+          <button class="main__removeGroupButton">Remove group</button>
+        </div>
+        `
+        );
+      });
+    }
+  }
+
+  // add border color change to every group field
+  document.querySelectorAll(".main__groupColor").forEach((color) => {
+    color.addEventListener("input", (e) => {
+      const data = e.target.value;
+      if (data.length === 4 || (data.length === 7 && data.charAt(0) === "#")) {
+        e.target.style.border = `1px solid ${data}`;
+      }
+    });
+  });
+
+  handleChange();
+  addRemoveFuncFields();
+  addRemoveFuncGroups();
+};
+
+const saveSetup = async () => {
+  const inputData = gatherData();
+  const filePathData = await ipcRenderer.invoke("saveSetupFile");
+  if (filePathData.canceled) return;
+
+  const filePath = filePathData.filePath;
+  if (exists(filePath)) {
+    remove(filePath);
+    write(filePath, inputData);
+  } else {
+    write(filePath, inputData);
+  }
 };
 
 const handleFocus = () => {
@@ -115,7 +381,7 @@ const handleFocus = () => {
   });
 };
 
-const addField = () => {
+const addField = (placeholder = "Field name") => {
   // check if it's the first field
   if (!firstField) {
     fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
@@ -125,27 +391,45 @@ const addField = () => {
     "beforeend",
     `
     <div class="main__field">
-      <input class="main__fieldName" type="text" placeholder="Field name" value="">
+      <input class="main__fieldName" type="text" placeholder="${placeholder}" value="">
       <button class="main__removeFieldButton">Remove field</button>
     </div>
     `
   );
-  // adding remove field function
-  document.querySelectorAll(".main__removeFieldButton").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      if (document.querySelectorAll(".main__field").length === 1) {
-        firstField = false;
-        document.querySelector(".main__fieldsListTitle").remove();
-      }
-      e.target.parentNode.remove();
-    });
-  });
+
+  setup.fields.push("");
+
+  handleChange();
+  addRemoveFuncFields();
   handleFocus();
 };
 
-settingsButton.addEventListener("click", () => {
-  menuOpened = !menuOpened;
-});
+const handleMenu = () => {
+  if (menuOpened) {
+    menu.style.display = "flex";
+    const menuOpen = Anime({
+      targets: ".main__settingsMenu",
+      duration: 100,
+      opacity: 1,
+      autoplay: false,
+      easing: "linear",
+    });
+    menuOpen.play();
+  } else {
+    const menuClose = Anime({
+      targets: ".main__settingsMenu",
+      duration: 100,
+      easing: "linear",
+      opacity: 0,
+      autoplay: false,
+      complete: () => {
+        menu.style.display = "none";
+      },
+    });
+
+    menuClose.play();
+  }
+};
 
 const addGroup = () => {
   // check if it's the first group field
@@ -153,6 +437,10 @@ const addGroup = () => {
     groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
     firstGroup = true;
   }
+  setup.groups.push({
+    groupName: "",
+    groupColor: "",
+  });
   groupsList.insertAdjacentHTML(
     "beforeend",
     `
@@ -173,46 +461,12 @@ const addGroup = () => {
     });
   });
 
-  // adding remove group function
-  document.querySelectorAll(".main__removeGroupButton").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      if (document.querySelectorAll(".main__group").length === 1) {
-        firstGroup = false;
-        document.querySelector(".main__groupsListTitle").remove();
-      }
-      e.target.parentNode.remove();
-    });
-  });
+  handleChange();
+  addRemoveFuncGroups();
   handleFocus();
 };
 
-//gathering data from inputs (for randomization and saving setups)
-const gatherData = () => {
-  const fields = [];
-  const groups = [];
-  const allFields = document.querySelectorAll(".main__field");
-  const allGroups = document.querySelectorAll(".main__group");
-
-  // gather data from inputs
-  allFields.forEach((field) => {
-    fields.push(field.querySelector(".main__fieldName").value);
-  });
-  allGroups.forEach((group) => {
-    const groupData = {
-      groupName: group.querySelector(".main__groupName").value,
-      groupColor:
-        group.querySelector(".main__groupColor").value === ""
-          ? "#000000"
-          : group.querySelector(".main__groupColor").value,
-    };
-    groups.push(groupData);
-  });
-  return {
-    type: "RanDomeRizerSetup",
-    fields: fields,
-    groups: groups,
-  };
-};
+// event listener adding
 
 // adding functionality to titlebar close and minimize buttons
 window.addEventListener("DOMContentLoaded", () => {
@@ -227,6 +481,13 @@ window.addEventListener("DOMContentLoaded", () => {
     remove("assets/temp");
     ipcRenderer.send("close");
   });
+
+  closeResultsButton.addEventListener("click", () => {
+    console.log("close");
+    results.style.left = "100%";
+    blur.style.left = "100%";
+  });
+
   if (!exists("config.json")) {
     config = {
       theme: "default",
@@ -265,22 +526,9 @@ window.addEventListener("keyup", (e) => {
   }
 });
 
-// loading last results (might remove or replace with manual loading/saving)
-loadLastResultsButton.addEventListener("click", () => {
-  if (exists("results/lastRandomize.json")) {
-    const data = read("results/lastRandomize.json", "json");
-    const groups = [];
-
-    data.forEach((piece) => {
-      if (!groups.some((x) => x.groupName === piece.group.groupName)) {
-        groups.push({
-          groupName: piece.group.groupName,
-          groupColor: piece.group.groupColor,
-        });
-      }
-    });
-    renderResults(data, groups);
-  }
+window.addEventListener("click", () => {
+  if (menuOpened) menuOpened = false;
+  handleMenu();
 });
 
 // adding group field
@@ -288,131 +536,40 @@ addGroupButton.addEventListener("click", () => {
   addGroup();
 });
 
-//TODO change that field name
 // adding field field
 addFieldButton.addEventListener("click", () => {
   addField();
 });
 
 //save randomization setup to JSON file
-saveSetupButton.addEventListener("click", async () => {
-  const inputData = gatherData();
-  const filePathData = await ipcRenderer.invoke("saveSetupFile");
-  if (filePathData.canceled) return;
-
-  const filePath = filePathData.filePath;
-  if (exists(filePath)) {
-    remove(filePath);
-    write(filePath, inputData);
-  } else {
-    write(filePath, inputData);
-  }
+saveSetupButton.addEventListener("click", () => {
+  saveSetup();
 });
 
 //load randomization setup from JSON file
-loadSetupButton.addEventListener("click", async () => {
-  // show file prompt to user and get file data
-  const file = await ipcRenderer.invoke("openSetupFile");
-  // if user canceled file selection, do nothing
-  if (file.canceled) return;
-  // else get file path (multiSelection is off, so only index 0 is needed)
-  const filePath = file.filePaths[0];
-
-  // check if file exists, just in case
-  if (exists(filePath)) {
-    const setup = read(filePath, "json");
-    if (!setup.type || setup.type !== "RanDomeRizerSetup") {
-      Toastify({
-        text: "File is not a setup!",
-        duration: 3000,
-        className: "main__errorToast",
-        gravity: "top",
-        position: "left",
-        stopOnFocus: true,
-        close: true,
-        offset: {
-          y: 10,
-        },
-        style: {
-          background: "#FF0000",
-          maxWidth: "200px",
-        },
-      }).showToast();
-      return;
-    }
-
-    // reset main window content
-    fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
-    groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
-
-    // render fields
-    setup.fields.forEach((field) => {
-      firstField = true;
-      fieldsList.insertAdjacentHTML(
-        "beforeend",
-        `
-        <div class="main__field">
-          <input class="main__fieldName" type="text" placeholder="${
-            setup.config.fieldPlaceholder
-              ? setup.config.fieldPlaceholder
-              : "Field name"
-          }" value="${field}">
-          <button class="main__removeFieldButton">Remove field</button>
-        </div>
-      `
-      );
-    });
-
-    // render groups
-    setup.groups.forEach((group) => {
-      firstGroup = true;
-      groupsList.insertAdjacentHTML(
-        "beforeend",
-        `
-        <div class="main__group">
-          <input class="main__groupName" type="text" placeholder="Group name" value="${group.groupName}">
-          <input class="main__groupColor" type="text" style="border: 1px solid ${group.groupColor}" placeholder="Group color(hex)" value="${group.groupColor}">
-          <button class="main__removeGroupButton">Remove group</button>
-        </div>
-        `
-      );
-    });
-  }
-
-  // add border color change to every group field
-  document.querySelectorAll(".main__groupColor").forEach((color) => {
-    color.addEventListener("input", (e) => {
-      const data = e.target.value;
-      if (data.length === 4 || (data.length === 7 && data.charAt(0) === "#")) {
-        e.target.style.border = `1px solid ${data}`;
-      }
-    });
-  });
-
-  // add remove function to every field field(I need to change that)
-  document.querySelectorAll(".main__removeFieldButton").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      if (document.querySelectorAll(".main__field").length === 1) {
-        firstField = false;
-        document.querySelector(".main__fieldsListTitle").remove();
-      }
-      e.target.parentNode.remove();
-    });
-  });
-
-  // add remove function to every group field
-  document.querySelectorAll(".main__removeGroupButton").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      if (document.querySelectorAll(".main__group").length === 1) {
-        firstGroup = false;
-        document.querySelector(".main__groupsListTitle").remove();
-      }
-      e.target.parentNode.remove();
-    });
-  });
+loadSetupButton.addEventListener("click", () => {
+  loadSetup();
 });
 
 //randomization
 randomizeButton.addEventListener("click", () => {
   randomize();
+});
+
+settingsButton.addEventListener("click", (e) => {
+  e.stopPropagation();
+  menuOpened = !menuOpened;
+  handleMenu();
+});
+
+menu.addEventListener("click", (e) => {
+  e.stopPropagation();
+});
+
+saveResultsButton.addEventListener("click", () => {
+  saveResults();
+});
+
+loadResultsButton.addEventListener("click", () => {
+  loadResults();
 });
