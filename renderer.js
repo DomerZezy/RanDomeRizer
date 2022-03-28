@@ -78,6 +78,7 @@ const handleChange = () => {
     if (!field.hasAttribute("event-input")) {
       field.setAttribute("event-input", true);
       field.addEventListener("input", (e) => {
+        console.log(field.getAttribute("pos"));
         setup.fields[parseInt(field.getAttribute("pos"))] = e.target.value;
       });
     }
@@ -308,11 +309,13 @@ const loadSetup = async () => {
     loadSetupButton.querySelector(".main__setupText").textContent =
       setupFile.config.title;
 
-    setup.fields = setupFile.fields;
-    setup.groups = setupFile.groups;
+    console.log(setup);
+
     setup.config = setupFile.config;
 
-    console.log(setup);
+    console.log(setupFile.fields.length, setupFile.groups, setup.fields.length);
+
+    console.log(setupFile.fields, setupFile.groups, setup.fields);
 
     fieldsList.innerHTML = "";
     groupsList.innerHTML = "";
@@ -320,19 +323,7 @@ const loadSetup = async () => {
     // render fields
     setupFile.fields.forEach((field) => {
       firstField = true;
-      fieldsList.insertAdjacentHTML(
-        "beforeend",
-        `
-        <div class="main__field">
-          <input class="main__fieldName" type="text" placeholder="${
-            setupFile.config.fieldPlaceholder
-              ? setupFile.config.fieldPlaceholder
-              : "Field name"
-          }" value="${field}">
-          <button class="main__removeFieldButton">Remove field</button>
-        </div>
-      `
-      );
+      addField(field, setupFile.config.fieldPlaceholder);
     });
 
     // render groups
@@ -343,17 +334,10 @@ const loadSetup = async () => {
       groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
       setupFile.groups.forEach((group) => {
         firstGroup = true;
-        groupsList.insertAdjacentHTML(
-          "beforeend",
-          `
-        <div class="main__group">
-          <input class="main__groupName" type="text" placeholder="Group name" value="${group.groupName}">
-          <input class="main__groupColor" type="text" style="border: 1px solid ${group.groupColor}" placeholder="Group color(hex)" value="${group.groupColor}">
-          <button class="main__removeGroupButton">Remove group</button>
-        </div>
-        `
-        );
+        addGroup(group.groupName, group.groupColor);
       });
+    } else {
+      setup.groups = setupFile.groups;
     }
   }
 
@@ -398,7 +382,7 @@ const handleFocus = () => {
   });
 };
 
-const addField = (placeholder = "Field name") => {
+const addField = (value = "", placeholder = "Field name") => {
   // check if it's the first field
   if (!firstField) {
     fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
@@ -408,13 +392,15 @@ const addField = (placeholder = "Field name") => {
     "beforeend",
     `
     <div class="main__field">
-      <input class="main__fieldName" type="text" placeholder="${placeholder}" value="">
-      <button class="main__removeFieldButton">Remove field</button>
+      <input class="main__fieldName" type="text" value="${value}" placeholder="${placeholder}" value="">
+      <button class="main__removeFieldButton" tabindex="-1">Remove field</button>
     </div>
     `
   );
 
-  setup.fields.push("");
+  setup.fields.push(value);
+
+  console.log(setup);
 
   handleChange();
   addRemoveFuncFields();
@@ -448,7 +434,7 @@ const handleMenu = () => {
   }
 };
 
-const addGroup = () => {
+const addGroup = (groupName = "", groupColor = "") => {
   // check if it's the first group field
   if (!firstGroup) {
     groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
@@ -462,9 +448,9 @@ const addGroup = () => {
     "beforeend",
     `
     <div class="main__group">
-      <input class="main__groupName" type="text" placeholder="Group name" value="">
-      <input class="main__groupColor" type="text" placeholder="Group color(hex)" value="">
-      <button class="main__removeGroupButton">Remove group</button>
+      <input class="main__groupName" type="text" placeholder="Group name" value="${groupName}">
+      <input class="main__groupColor" type="text" placeholder="Group color(hex)" value="${groupColor}">
+      <button class="main__removeGroupButton" tabindex="-1">Remove group</button>
     </div>
     `
   );
