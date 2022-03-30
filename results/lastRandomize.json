@@ -6,21 +6,14 @@
         "groupName": "Team 1",
         "groupColor": "#0F0"
       },
-      "field": "7"
+      "field": "4"
     },
     {
       "group": {
-        "groupName": "Team 1",
-        "groupColor": "#0F0"
+        "groupName": "Team 2",
+        "groupColor": "#00F"
       },
-      "field": "3"
-    },
-    {
-      "group": {
-        "groupName": "Team 1",
-        "groupColor": "#0F0"
-      },
-      "field": "0"
+      "field": "10"
     },
     {
       "group": {
@@ -31,29 +24,15 @@
     },
     {
       "group": {
+        "groupName": "Team 2",
+        "groupColor": "#00F"
+      },
+      "field": "9"
+    },
+    {
+      "group": {
         "groupName": "Team 1",
         "groupColor": "#0F0"
-      },
-      "field": "2"
-    },
-    {
-      "group": {
-        "groupName": "Team 2",
-        "groupColor": "#00F"
-      },
-      "field": "5"
-    },
-    {
-      "group": {
-        "groupName": "Team 2",
-        "groupColor": "#00F"
-      },
-      "field": "4"
-    },
-    {
-      "group": {
-        "groupName": "Team 2",
-        "groupColor": "#00F"
       },
       "field": "1"
     },
@@ -62,14 +41,35 @@
         "groupName": "Team 2",
         "groupColor": "#00F"
       },
-      "field": "9"
+      "field": "2"
+    },
+    {
+      "group": {
+        "groupName": "Team 1",
+        "groupColor": "#0F0"
+      },
+      "field": "5"
     },
     {
       "group": {
         "groupName": "Team 2",
         "groupColor": "#00F"
       },
+      "field": "3"
+    },
+    {
+      "group": {
+        "groupName": "Team 1",
+        "groupColor": "#0F0"
+      },
       "field": "6"
+    },
+    {
+      "group": {
+        "groupName": "Team 2",
+        "groupColor": "#00F"
+      },
+      "field": "7"
     }
   ],
   "groups": [
