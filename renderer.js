@@ -99,7 +99,6 @@ const handleChange = () => {
       field.addEventListener("input", (e) => {
         setup.groups[parseInt(field.getAttribute("pos"))].groupColor =
           e.target.value;
-        console.log(setup.groups, setup.fields);
       });
     }
   });
@@ -143,7 +142,6 @@ const addRemoveFuncGroups = () => {
       );
       handleChange();
       if (document.querySelectorAll(".main__group").length === 0) {
-        console.log("remove title called");
         firstGroup = false;
         try {
           document.querySelector(".main__groupsListTitle").remove();
@@ -233,28 +231,25 @@ const randomize = () => {
   remove("setups/lastSetup.json");
   write("setups/lastSetup.json", data);
 
-  // randomization algorithm
-  const usedNumbers = [];
   const resultsList = [];
-  for (let i = 0; i < groups.length; i++) {
-    for (let j = 0; j < Math.ceil(fields.length / groups.length); j++) {
-      let done = false;
-      while (!done) {
-        const randomNumber = Math.floor(Math.random() * fields.length);
-        if (usedNumbers.length === fields.length) {
-          done = true;
-          continue;
-        }
-        if (!usedNumbers.some((x) => x === randomNumber)) {
-          usedNumbers.push(randomNumber);
-          const result = {
-            group: groups[i],
-            field: fields[randomNumber],
-          };
-          resultsList.push(result);
-          done = true;
-        }
+
+  // new algorithm
+  const randomizationFields = [...inputData.fields];
+
+  for (let i = 0; i < fields.length; i++) {
+    `i = ${i}`;
+    for (let j = 0; j < groups.length; j++) {
+      if (randomizationFields.length === 0) {
+        continue;
       }
+      const randomField = Math.floor(
+        Math.random() * randomizationFields.length
+      );
+      resultsList.push({
+        group: groups[j],
+        field: randomizationFields[randomField],
+      });
+      randomizationFields.splice(randomField, 1);
     }
   }
 
@@ -301,38 +296,46 @@ const loadSetup = async () => {
       return;
     }
 
-    // reset main window content
-    fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
+    if (
+      !setupFile.fields ||
+      !setupFile.groups ||
+      setupFile.fields.length === 0 ||
+      setupFile.groups.length === 0
+    ) {
+      Toastify({
+        text: "Setup not valid!",
+        duration: 3000,
+        className: "main__errorToast",
+        gravity: "top",
+        position: "left",
+        stopOnFocus: true,
+        close: true,
+        offset: {
+          y: 10,
+        },
+        style: {
+          background: "#FF0000",
+          maxWidth: "200px",
+        },
+      }).showToast();
+      return;
+    }
 
     //show setup title
     loadSetupButton.querySelector(".main__setupText").textContent =
       setupFile.config.title;
 
-    setup.fields = setupFile.fields;
-    setup.groups = setupFile.groups;
     setup.config = setupFile.config;
-
-    console.log(setup);
 
     fieldsList.innerHTML = "";
     groupsList.innerHTML = "";
 
+    fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
+
     // render fields
     setupFile.fields.forEach((field) => {
       firstField = true;
-      fieldsList.insertAdjacentHTML(
-        "beforeend",
-        `
-        <div class="main__field">
-          <input class="main__fieldName" type="text" placeholder="${
-            setupFile.config.fieldPlaceholder
-              ? setupFile.config.fieldPlaceholder
-              : "Field name"
-          }" value="${field}">
-          <button class="main__removeFieldButton">Remove field</button>
-        </div>
-      `
-      );
+      addField(field, setupFile.config.fieldPlaceholder);
     });
 
     // render groups
@@ -343,17 +346,10 @@ const loadSetup = async () => {
       groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
       setupFile.groups.forEach((group) => {
         firstGroup = true;
-        groupsList.insertAdjacentHTML(
-          "beforeend",
-          `
-        <div class="main__group">
-          <input class="main__groupName" type="text" placeholder="Group name" value="${group.groupName}">
-          <input class="main__groupColor" type="text" style="border: 1px solid ${group.groupColor}" placeholder="Group color(hex)" value="${group.groupColor}">
-          <button class="main__removeGroupButton">Remove group</button>
-        </div>
-        `
-        );
+        addGroup(group.groupName, group.groupColor);
       });
+    } else {
+      setup.groups = setupFile.groups;
     }
   }
 
@@ -398,7 +394,7 @@ const handleFocus = () => {
   });
 };
 
-const addField = (placeholder = "Field name") => {
+const addField = (value = "", placeholder = "Field name") => {
   // check if it's the first field
   if (!firstField) {
     fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
@@ -408,13 +404,13 @@ const addField = (placeholder = "Field name") => {
     "beforeend",
     `
     <div class="main__field">
-      <input class="main__fieldName" type="text" placeholder="${placeholder}" value="">
-      <button class="main__removeFieldButton">Remove field</button>
+      <input class="main__fieldName" type="text" value="${value}" placeholder="${placeholder}" value="">
+      <button class="main__removeFieldButton" tabindex="-1">Remove field</button>
     </div>
     `
   );
 
-  setup.fields.push("");
+  setup.fields.push(value);
 
   handleChange();
   addRemoveFuncFields();
@@ -448,23 +444,25 @@ const handleMenu = () => {
   }
 };
 
-const addGroup = () => {
+const addGroup = (groupName = "", groupColor = "") => {
   // check if it's the first group field
   if (!firstGroup) {
     groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
     firstGroup = true;
   }
   setup.groups.push({
-    groupName: "",
-    groupColor: "",
+    groupName: groupName,
+    groupColor: groupColor,
   });
   groupsList.insertAdjacentHTML(
     "beforeend",
     `
     <div class="main__group">
-      <input class="main__groupName" type="text" placeholder="Group name" value="">
-      <input class="main__groupColor" type="text" placeholder="Group color(hex)" value="">
-      <button class="main__removeGroupButton">Remove group</button>
+      <input class="main__groupName" type="text" placeholder="Group name" value="${groupName}">
+      <input class="main__groupColor" type="text" placeholder="Group color(hex)" style="border: 1px solid ${
+        groupColor === "" ? "#FFFFFF" : groupColor
+      }" value="${groupColor === "" ? "#FFFFFF" : groupColor}">
+      <button class="main__removeGroupButton" tabindex="-1">Remove group</button>
     </div>
     `
   );
@@ -500,7 +498,6 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   closeResultsButton.addEventListener("click", () => {
-    console.log("close");
     results.style.left = "100%";
     blur.style.left = "100%";
   });
