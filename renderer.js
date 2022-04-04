@@ -591,3 +591,25 @@ loadResultsButton.addEventListener("click", () => {
 resetButton.addEventListener("click", () => {
   window.location.reload();
 });
+
+ipcRenderer.on("updateReady", (e, message) => {
+  Toastify({
+    text: "New update ready, click to restart!",
+    duration: -1,
+    className: "main__updateToast",
+    gravity: "top",
+    position: "left",
+    stopOnFocus: true,
+    close: true,
+    offset: {
+      y: 10,
+    },
+    style: {
+      background: "#0055FF",
+      maxWidth: "400px",
+    },
+    onClick: () => {
+      ipcRenderer.send("quitAndInstall");
+    },
+  }).showToast();
+});

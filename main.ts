@@ -1,5 +1,21 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  dialog,
+  autoUpdater,
+} = require("electron");
 const { remove } = require("fs-jetpack");
+
+const server =
+  "https://randomerizer-update-repo-8rbypobkf-domerzezy.vercel.app";
+const url = `${server}/update/${process.platform}/${app.getVersion()}`;
+
+autoUpdater.setFeedURL({ url });
+
+setInterval(() => {
+  autoUpdater.checkForUpdates();
+}, 300000);
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -26,6 +42,10 @@ const createWindow = () => {
 
   ipcMain.on("close", () => {
     win.close();
+  });
+
+  ipcMain.on("quitAndInstall", () => {
+    autoUpdater.quitAndInstall();
   });
 
   ipcMain.handle("openSetupFile", async () => {
@@ -64,6 +84,10 @@ const createWindow = () => {
       filters: [{ name: "JSON files", extensions: ["json"] }],
     });
     return file;
+  });
+
+  autoUpdater.on("update-downloaded", (e, rno, rna) => {
+    win.webContents.send("updateReady");
   });
 };
 
