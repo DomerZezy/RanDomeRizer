@@ -1,9 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
-
 * {
   padding: 0;
   margin: 0;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   font-family: "Lato", Arial, Helvetica, sans-serif;
 }
 
@@ -14,9 +14,15 @@ html {
 .navBar {
   height: 30px;
   width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   -webkit-app-region: drag;
   background-color: #222;
 }
@@ -28,21 +34,30 @@ html {
 }
 
 .navBar__navButtonsWrap {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  width: 90px;
+  width: 75px;
   height: 100%;
 }
 
 .navBar__navButton {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   height: 30px;
-  width: 30px;
+  width: 25px;
   border: none;
   background-color: #222;
   -webkit-app-region: no-drag;
   cursor: pointer;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
 }
 
@@ -56,18 +71,18 @@ html {
 }
 
 .navBar__closeButton > svg {
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
 }
 
 .navBar__minimizeButton > svg {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 }
 
 .navBar__settingsButton > svg {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 }
 
 .main {
@@ -80,9 +95,15 @@ html {
 .main__upperButtonsWrap {
   width: 100%;
   height: 50px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-evenly;
-  align-items: center;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .main__settingsMenu {
@@ -91,7 +112,10 @@ html {
   top: 30px;
   right: 60px;
   width: 200px;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   opacity: 0;
 }
 
@@ -103,6 +127,7 @@ html {
   padding: 4px;
   font-size: 0.9em;
   color: white;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
   cursor: pointer;
 }
@@ -115,8 +140,13 @@ html {
   width: 100%;
   height: calc(100% - 82px);
   overflow-y: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   color: white;
 }
 
@@ -154,6 +184,7 @@ html {
   color: white;
   background-color: #333;
   font-size: 1.2em;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
   border: none;
   cursor: pointer;
@@ -181,6 +212,7 @@ html {
   color: white;
   font-size: 1.4em;
   cursor: pointer;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
 }
 
@@ -198,6 +230,8 @@ html {
 
 .main__group {
   margin-top: 8px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
   height: 40px;
@@ -218,6 +252,7 @@ html {
   background-color: #444;
   color: white;
   border: 1px solid black;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
   outline: none;
   padding-left: 8px;
@@ -228,6 +263,7 @@ html {
   background-color: #444;
   color: white;
   cursor: pointer;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
 }
 
@@ -237,6 +273,8 @@ html {
 
 .main__field {
   margin-top: 8px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
   height: 40px;
@@ -256,6 +294,7 @@ html {
   background-color: #444;
   border: none;
   color: white;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
   cursor: pointer;
 }
@@ -274,8 +313,12 @@ html {
 }
 
 .main__loadSetupButton {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   width: 100%;
   height: 32px;
   border: none;
@@ -283,6 +326,7 @@ html {
   background-color: #222;
   color: white;
   font-size: 20px;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
   cursor: pointer;
 }
@@ -305,3 +349,4 @@ html {
   height: 100%;
   line-height: 32px;
 }
+/*# sourceMappingURL=style.css.map */
