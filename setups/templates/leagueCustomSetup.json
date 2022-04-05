@@ -3,16 +3,16 @@
   "fields": ["", "", "", "", "", "", "", "", "", ""],
   "groups": [
     {
-      "groupName": "Team 1",
-      "groupColor": "#0F0"
+      "groupName": "Team Blue",
+      "groupColor": "#0D8DC3"
     },
     {
-      "groupName": "Team 2",
-      "groupColor": "#00F"
+      "groupName": "Team Red",
+      "groupColor": "#9A0F11"
     }
   ],
   "config": {
-    "visibility": ["noVisibleGroups"],
+    "visibility": ["staticGroups", "staticFields"],
     "fieldPlaceholder": "Summoner's name",
     "title": "League of Legends"
   }

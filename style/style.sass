@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap")
+@import ./__variables
 
 * 
   padding: 0
@@ -10,32 +11,33 @@ html
   overflow-x: hidden
 
 .navBar 
-  height: 30px
+  height: 32px
   width: 100%
   display: flex
   justify-content: space-between
   align-items: center
   -webkit-app-region: drag
-  background-color: #222
+  background-color: $backgroundColor
 
 .navBar__title 
   font-weight: bold
   padding-left: 8px
-  color: white
+  color: $primaryText
 
 .navBar__navButtonsWrap 
   display: flex
-  width: 75px
+  min-width: 70px
   height: 100%
 
 .navBar__navButton 
   display: flex
   justify-content: center
-  align-items: center
-  height: 30px
-  width: 25px
+  align-items: flex-end
+  height: 32px
+  min-width: 24px
+  padding: 0 4px
   border: none
-  background-color: #222
+  background-color: transparent
   -webkit-app-region: no-drag
   cursor: pointer
   transition: 0.3s
@@ -48,21 +50,18 @@ html
   background-color: #f00
 
 .navBar__closeButton > svg 
-  width: 20px
-  height: 20px
+  margin-bottom: 10px
 
 .navBar__minimizeButton > svg 
-  width: 15px
-  height: 15px
+  margin-bottom: 10px
 
 .navBar__settingsButton > svg 
-  width: 15px
-  height: 15px
+  margin-bottom: 10px
 
 .main 
-  height: calc(100vh - 30px)
+  height: calc(100vh - 32px)
   width: 100%
-  background-image: #333
+  background-color: $backgroundColor
   overflow-y: auto
 
 .main__upperButtonsWrap 
@@ -85,10 +84,10 @@ html
   width: 100%
   height: 30px
   border: none
-  background-color: #444
+  background-color: $backgroundColor
   padding: 4px
   font-size: 0.9em
-  color: white
+  color: $primaryText
   transition: 0.3s
   cursor: pointer
 
@@ -97,11 +96,14 @@ html
 
 .main__list 
   width: 100%
-  height: calc(100% - 82px)
+  height: calc(100% - 122px)
+  background-image: url("../assets/background.png")
   overflow-y: auto
   display: flex
   flex-direction: column
-  color: white
+  color: $primaryText
+  &::-webkit-scrollbar
+    display: none
 
 .main__results 
   position: absolute
@@ -111,7 +113,7 @@ html
   left: 100vw
   z-index: 3
   background-color: #333
-  color: white
+  color: $primaryText
   border-radius: 5px
   overflow-y: auto
 
@@ -124,14 +126,14 @@ html
 
 .main__resultsResult 
   font-size: 1.1em
-  color: white
+  color: $primaryText
   padding: 4px
   background-color: #222
 
 .main__resultsCloseButton 
   width: 100%
   height: 30px
-  color: white
+  color: $primaryText
   background-color: #333
   font-size: 1.2em
   transition: 0.3s
@@ -153,42 +155,31 @@ html
 .main__randomizeButton 
   height: 50px
   width: 100%
-  background-color: #222
+  background-image: $primaryGradient
   border: none
-  color: white
-  font-size: 1.4em
+  color: $primaryText
+  font-size: 20px
   cursor: pointer
-  transition: 0.3s
-
-.main__randomizeButton:hover 
-  background-color: #111
-
-.main__groupsListTitle,
-.main__fieldsListTitle 
-  width: 100%
-  text-align: center
-  margin-top: 8px
-  font-size: 1.3em
 
 .main__group 
   margin-top: 8px
   display: flex
   width: 100%
   height: 40px
-  background-color: #444
+  background-color: $backgroundColor
 
 .main__groupName 
   width: 45%
-  background-color: #444
-  color: white
+  background-color: $backgroundColor
+  color: $primaryText
   border: none
   outline: none
   padding-left: 8px
 
 .main__groupColor 
   width: 45%
-  background-color: #444
-  color: white
+  background-color: $backgroundColor
+  color: $primaryText
   border: 1px solid black
   transition: 0.3s
   outline: none
@@ -196,8 +187,8 @@ html
 
 .main__removeGroupButton 
   border: none
-  background-color: #444
-  color: white
+  background-color: $backgroundColor
+  color: $primaryText
   cursor: pointer
   transition: 0.3s
 
@@ -205,50 +196,58 @@ html
   background-color: #222
 
 .main__field 
-  margin-top: 8px
+  margin: 8px auto
   display: flex
-  width: 100%
-  height: 40px
-  background-color: #444
+  justify-content: space-between
+  width: 192px
+  height: 24px
+  border-left-width: 0
+  border-right-width: 0
+  border-top-width: 0
+  border-style: solid
+  border-bottom-width: 1px
+  border-image: $primaryGradient 30
+
+.main__fieldNumber
+  width: 25px
+  font-size: 16px
+  font-weight: bold
 
 .main__field > input 
   outline: none
-  width: 80%
+  width: 95%
+  height: 100%
   border: none
-  background-color: #444
-  color: white
-  padding-left: 8px
-
-.main__field > button 
-  background-color: #444
-  border: none
-  color: white
-  transition: 0.3s
-  cursor: pointer
-
-.main__field > button:hover 
-  background-color: #222
-
-.main__pickerScreen 
-  display: none
-  width: 100%
-  height: 100vh
-  position: absolute
-  top: 0
-  left: 0
+  background-color: transparent
+  color: $primaryText
+  text-align: center
+  font-size: 16px
+  font-weight: bold
 
 .main__loadSetupButton 
   display: flex
+  flex-direction: column
   align-items: center
   width: 100%
   height: 32px
   border: none
   background-color: transparent
-  background-color: #222
-  color: white
+  background-color: $backgroundColor
+  color: $primaryText
   font-size: 20px
   transition: 0.3s
   cursor: pointer
+  &::before
+    content: ""
+    display: block
+    width: 100%
+    min-height: 1px
+    background-image: $primaryGradient
+
+.main__loadSetupButtonWrap
+  display: flex
+  width: 100%
+  justify-content: flex-start
 
 .main__loadSetupButton:hover 
   background-color: #111
@@ -257,12 +256,80 @@ html
   width: 20%
   height: 100%
   padding-left: 8px
+  font-size: 14px
   text-align: left
-  font-size: 16px
+  font-weight: bold
   line-height: 32px
 
 .main__setupText 
-  width: 80%
-  height: 100%
+  position: absolute
+  font-weight: bold
+  top: 32px
+  left: 0
+  width: 100%
+  height: 32px
+  line-height: 32px
+  font-size: 20px
+
+.main__setupSettingsWrap
+  height: 40px
+  width: 100%
+  &::after
+    content: ""
+    display: block
+    width: 100%
+    height: 1px
+    background-image: $primaryGradient
+  
+.main__setupSettingsTitle
+  margin-left: 8px
+  color: $primaryText
+  line-height: 40px
+  font-size: 14px
+  font-weight: bold
+
+.main__setupSettings
+  display: flex
+  width: 176px
+  height: 40px
+  align-items: center
+  justify-content: space-between
+  position: absolute
+  top: 64px
+  left: calc( 50% - 88px )
+
+.main__fieldsList
+  padding: 16px 0
+
+.main__fieldsSettingsTitle, .main__groupsSettingsTitle
+  color: $primaryText
+  font-size: 16px
+  font-weight: bold
   line-height: 32px
 
+.main__fieldsSettingsInput, .main__groupsSettingsInput
+  width: 20px
+  height: 100%
+  margin-left: 8px
+  background-color: transparent
+  font-size: 16px
+  border: none
+  color: $primaryText
+  text-align: center
+  font-weight: bold
+  outline: none
+  &::-webkit-inner-spin-button
+    -webkit-appearance: none
+    margin: 0
+  &::-webkit-outer-spin-button
+    -webkit-appearance: none
+    margin: 0
+  &[type=number]
+    -moz-appearance: textfield
+
+.main__fieldsSettingsWrap, .main__groupsSettingsWrap
+  min-width: 70px
+  height: 100%
+  display: flex
+  justify-content: space-around
+  align-items: center

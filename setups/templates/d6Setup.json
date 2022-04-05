@@ -1,0 +1,19 @@
+{
+  "type": "RanDomeRizerSetup",
+  "fields": ["1", "2", "3", "4", "5", "6"],
+  "groups": [
+    {
+      "groupName": "Result",
+      "groupColor": "#FFFFFF"
+    }
+  ],
+  "config": {
+    "visibility": [
+      "staticGroups",
+      "staticFields",
+      "doNotRenderFields",
+      ["showLimitedResults", 1]
+    ],
+    "title": "D6 Dice"
+  }
+}

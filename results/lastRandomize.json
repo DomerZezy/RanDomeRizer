@@ -1,5 +1,155 @@
 {
   "type": "RanDomeRizerResults",
-  "results": [],
-  "groups": []
+  "results": [
+    {
+      "group": {
+        "groupName": "Group 1",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "8"
+    },
+    {
+      "group": {
+        "groupName": "Group 2",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "5"
+    },
+    {
+      "group": {
+        "groupName": "Group 1",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "17"
+    },
+    {
+      "group": {
+        "groupName": "Group 2",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "7"
+    },
+    {
+      "group": {
+        "groupName": "Group 1",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "16"
+    },
+    {
+      "group": {
+        "groupName": "Group 2",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "4"
+    },
+    {
+      "group": {
+        "groupName": "Group 1",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "1"
+    },
+    {
+      "group": {
+        "groupName": "Group 2",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "2"
+    },
+    {
+      "group": {
+        "groupName": "Group 1",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "19"
+    },
+    {
+      "group": {
+        "groupName": "Group 2",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "6"
+    },
+    {
+      "group": {
+        "groupName": "Group 1",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "14"
+    },
+    {
+      "group": {
+        "groupName": "Group 2",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "15"
+    },
+    {
+      "group": {
+        "groupName": "Group 1",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "12"
+    },
+    {
+      "group": {
+        "groupName": "Group 2",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "10"
+    },
+    {
+      "group": {
+        "groupName": "Group 1",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "9"
+    },
+    {
+      "group": {
+        "groupName": "Group 2",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "11"
+    },
+    {
+      "group": {
+        "groupName": "Group 1",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "20"
+    },
+    {
+      "group": {
+        "groupName": "Group 2",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "18"
+    },
+    {
+      "group": {
+        "groupName": "Group 1",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "3"
+    },
+    {
+      "group": {
+        "groupName": "Group 2",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "13"
+    }
+  ],
+  "groups": [
+    {
+      "groupName": "Group 1",
+      "groupColor": "#FFFFFF"
+    },
+    {
+      "groupName": "Group 2",
+      "groupColor": "#FFFFFF"
+    }
+  ]
 }

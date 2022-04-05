@@ -1,27 +1,21 @@
-const { remove, write, exists, read, cwd } = require("fs-jetpack");
+const { remove, write, exists, read } = require("fs-jetpack");
 const { ipcRenderer } = require("electron"); // needed since remote module got deprecated
 const Toastify = require("toastify-js");
-const ColorPicker = require("simple-color-picker");
 const Anime = require("animejs");
-
-const colorPicker = new ColorPicker({
-  color: "#000000",
-  el: document.querySelector(".main__pickerScreen"),
-});
 
 // gather all necessary elements
 const settingsButton = document.querySelector(".navBar__settingsButton");
 
 const menu = document.querySelector(".main__settingsMenu");
-const addFieldButton = document.querySelector(".main__addFieldButton");
-const addGroupButton = document.querySelector(".main__addGroupButton");
 const saveSetupButton = document.querySelector(".main__saveSetupButton");
 const saveResultsButton = document.querySelector(".main__saveResultsButton");
 const loadResultsButton = document.querySelector(".main__loadResultsButton");
 const resetButton = document.querySelector(".main__resetButton");
 
+const fieldsInput = document.querySelector(".main__fieldsSettingsInput");
+const groupsInput = document.querySelector(".main__groupsSettingsInput");
+
 const loadSetupButton = document.querySelector(".main__loadSetupButton");
-const groupsList = document.querySelector(".main__groupsList");
 const fieldsList = document.querySelector(".main__fieldsList");
 const randomizeButton = document.querySelector(".main__randomizeButton");
 
@@ -36,15 +30,14 @@ const setup = {
 
 const closeResultsButton = document.querySelector(".main__resultsCloseButton");
 
-let config;
+let fieldsAmount = 0;
+let groupsAmount = 0;
+
+let userConfig;
 let inputFocused = false;
 let menuOpened = false;
 
 let resultsObject;
-
-// for displaying "Groups" and "Fields" after adding fields (those titles shouldn't show multiple times)
-let firstGroup = false;
-let firstField = false;
 
 // rendering results
 const renderResults = (resultsList) => {
@@ -70,8 +63,6 @@ const renderResults = (resultsList) => {
 
 const handleChange = () => {
   const fields = document.querySelectorAll(".main__fieldName");
-  const groupsName = document.querySelectorAll(".main__groupName");
-  const groupsColor = document.querySelectorAll(".main__groupColor");
 
   fields.forEach((field, index) => {
     field.setAttribute("pos", index);
@@ -81,73 +72,6 @@ const handleChange = () => {
         setup.fields[parseInt(field.getAttribute("pos"))] = e.target.value;
       });
     }
-  });
-  groupsName.forEach((field, index) => {
-    field.setAttribute("pos", index);
-    if (!field.hasAttribute("event-input")) {
-      field.setAttribute("event-input", true);
-      field.addEventListener("input", (e) => {
-        setup.groups[parseInt(field.getAttribute("pos"))].groupName =
-          e.target.value;
-      });
-    }
-  });
-  groupsColor.forEach((field, index) => {
-    field.setAttribute("pos", index);
-    if (!field.hasAttribute("event-input")) {
-      field.setAttribute("event-input", true);
-      field.addEventListener("input", (e) => {
-        setup.groups[parseInt(field.getAttribute("pos"))].groupColor =
-          e.target.value;
-      });
-    }
-  });
-};
-
-const addRemoveFuncFields = () => {
-  document.querySelectorAll(".main__removeFieldButton").forEach((button) => {
-    if (!button.hasAttribute("event-click")) {
-      button.setAttribute("event-click", true);
-      button.addEventListener("click", (e) => {
-        e.target.parentNode.remove();
-        setup.fields.splice(
-          parseInt(
-            e.target.parentNode
-              .querySelector(".main__fieldName")
-              .getAttribute("pos")
-          ),
-          1
-        );
-        handleChange();
-        if (document.querySelectorAll(".main__field").length === 0) {
-          firstField = false;
-          document.querySelector(".main__fieldsListTitle").remove();
-        }
-      });
-    }
-  });
-};
-
-const addRemoveFuncGroups = () => {
-  document.querySelectorAll(".main__removeGroupButton").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      e.target.parentNode.remove();
-      setup.groups.splice(
-        parseInt(
-          e.target.parentNode
-            .querySelector(".main__groupName")
-            .getAttribute("pos")
-        ),
-        1
-      );
-      handleChange();
-      if (document.querySelectorAll(".main__group").length === 0) {
-        firstGroup = false;
-        try {
-          document.querySelector(".main__groupsListTitle").remove();
-        } catch (e) {}
-      }
-    });
   });
 };
 
@@ -253,6 +177,24 @@ const randomize = () => {
     }
   }
 
+  if (
+    setup.config.visibility &&
+    setup.config.visibility.some(
+      (x) => typeof x === "object" && x[0] === "showLimitedResults"
+    )
+  ) {
+    let amount = 0;
+    setup.config.visibility.forEach((attribute) => {
+      if (
+        typeof attribute === "object" &&
+        attribute[0] === "showLimitedResults"
+      ) {
+        amount = attribute[1];
+      }
+    });
+    resultsList.splice(amount);
+  }
+
   resultsObject = {
     type: "RanDomeRizerResults",
     results: resultsList,
@@ -321,51 +263,53 @@ const loadSetup = async () => {
       return;
     }
 
+    setup.fields = [];
+    setup.groups = [];
+
+    fieldsAmount = setupFile.fields.length;
+    groupsAmount = setupFile.groups.length;
+
+    fieldsInput.removeAttribute("readonly");
+    groupsInput.removeAttribute("readonly");
+
     //show setup title
     loadSetupButton.querySelector(".main__setupText").textContent =
       setupFile.config.title;
 
+    // load config to internal object
     setup.config = setupFile.config;
 
     fieldsList.innerHTML = "";
-    groupsList.innerHTML = "";
 
-    fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
+    // config visibility checks
+    if (setup.config.visibility.some((x) => x === "staticGroups")) {
+      groupsInput.setAttribute("readonly", true);
+    }
 
-    // render fields
-    setupFile.fields.forEach((field) => {
-      firstField = true;
-      addField(field, setupFile.config.fieldPlaceholder);
-    });
+    if (setup.config.visibility.some((x) => x === "staticFields")) {
+      fieldsInput.setAttribute("readonly", true);
+    }
 
-    // render groups
-    if (
-      !setup.config.visibility ||
-      !setup.config.visibility.some((x) => x === "noVisibleGroups")
-    ) {
-      groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
-      setupFile.groups.forEach((group) => {
-        firstGroup = true;
-        addGroup(group.groupName, group.groupColor);
+    if (!setup.config.visibility.some((x) => x === "doNotRenderFields")) {
+      // render fields
+      setupFile.fields.forEach((field) => {
+        addField(field, setupFile.config.fieldPlaceholder);
       });
     } else {
-      setup.groups = setupFile.groups;
+      setup.fields = setupFile.fields;
     }
-  }
 
-  // add border color change to every group field
-  document.querySelectorAll(".main__groupColor").forEach((color) => {
-    color.addEventListener("input", (e) => {
-      const data = e.target.value;
-      if (data.length === 4 || (data.length === 7 && data.charAt(0) === "#")) {
-        e.target.style.border = `1px solid ${data}`;
-      }
+    // show amount of each value in their respective input
+    groupsInput.value = setupFile.groups.length;
+    fieldsInput.value = setupFile.fields.length;
+
+    // add fields to internal object
+    setupFile.groups.forEach((group) => {
+      addGroup(group.groupName, group.groupColor);
     });
-  });
-
+  }
+  // invoke method responsible for field input event listeners
   handleChange();
-  addRemoveFuncFields();
-  addRemoveFuncGroups();
 };
 
 const saveSetup = async () => {
@@ -382,8 +326,9 @@ const saveSetup = async () => {
   }
 };
 
+// remove keybinding catching when input is focused
 const handleFocus = () => {
-  const fields = document.querySelectorAll("input[type=text]");
+  const fields = document.querySelectorAll("input");
   fields.forEach((field) => {
     field.addEventListener("focus", () => {
       inputFocused = true;
@@ -395,17 +340,13 @@ const handleFocus = () => {
 };
 
 const addField = (value = "", placeholder = "Field name") => {
-  // check if it's the first field
-  if (!firstField) {
-    fieldsList.innerHTML = `<p class="main__fieldsListTitle">Fields</p>`;
-    firstField = true;
-  }
   fieldsList.insertAdjacentHTML(
     "beforeend",
     `
     <div class="main__field">
-      <input class="main__fieldName" type="text" value="${value}" placeholder="${placeholder}" value="">
-      <button class="main__removeFieldButton" tabindex="-1">Remove field</button>
+      <span class="main__fieldNumber">${
+        setup.fields.length + 1
+      })</span><input class="main__fieldName" type="text" value="${value}" placeholder="${placeholder}" value="">
     </div>
     `
   );
@@ -413,8 +354,30 @@ const addField = (value = "", placeholder = "Field name") => {
   setup.fields.push(value);
 
   handleChange();
-  addRemoveFuncFields();
   handleFocus();
+};
+
+const addGroup = (
+  groupName = setup.groups ? `Group ${setup.groups.length + 1}` : "Group 1",
+  groupColor = "#FFFFFF"
+) => {
+  setup.groups.push({
+    groupName: groupName,
+    groupColor: groupColor,
+  });
+};
+
+const removeField = (amount) => {
+  for (let i = 0; i < amount; i++) {
+    setup.fields.pop();
+    document.querySelector(".main__field:last-child").remove();
+  }
+};
+
+const removeGroup = (amount) => {
+  for (let i = 0; i < amount; i++) {
+    setup.groups.pop();
+  }
 };
 
 const handleMenu = () => {
@@ -444,41 +407,32 @@ const handleMenu = () => {
   }
 };
 
-const addGroup = (groupName = "", groupColor = "") => {
-  // check if it's the first group field
-  if (!firstGroup) {
-    groupsList.innerHTML = `<p class="main__groupsListTitle">Groups</p>`;
-    firstGroup = true;
-  }
-  setup.groups.push({
-    groupName: groupName,
-    groupColor: groupColor,
-  });
-  groupsList.insertAdjacentHTML(
-    "beforeend",
-    `
-    <div class="main__group">
-      <input class="main__groupName" type="text" placeholder="Group name" value="${groupName}">
-      <input class="main__groupColor" type="text" placeholder="Group color(hex)" style="border: 1px solid ${
-        groupColor === "" ? "#FFFFFF" : groupColor
-      }" value="${groupColor === "" ? "#FFFFFF" : groupColor}">
-      <button class="main__removeGroupButton" tabindex="-1">Remove group</button>
-    </div>
-    `
-  );
-  // adding dynamic group color border change
-  document.querySelectorAll(".main__groupColor").forEach((color) => {
-    color.addEventListener("input", (e) => {
-      const data = e.target.value;
-      if (data.length === 4 || (data.length === 7 && data.charAt(0) === "#")) {
-        e.target.style.border = `1px solid ${data}`;
+const checkFieldsDifference = () => {
+  if (parseInt(fieldsInput.value) !== fieldsAmount) {
+    const difference = parseInt(fieldsInput.value) - fieldsAmount;
+    fieldsAmount = parseInt(fieldsInput.value);
+    if (difference > 0) {
+      for (let i = 0; i < difference; i++) {
+        addField();
       }
-    });
-  });
+    } else {
+      removeField(-difference);
+    }
+  }
+};
 
-  handleChange();
-  addRemoveFuncGroups();
-  handleFocus();
+const checkGroupsDifference = () => {
+  if (parseInt(groupsInput.value) !== groupsAmount) {
+    const difference = parseInt(groupsInput.value) - groupsAmount;
+    groupsAmount = parseInt(groupsInput.value);
+    if (difference > 0) {
+      for (let i = 0; i < difference; i++) {
+        addGroup();
+      }
+    } else {
+      removeGroup(-difference);
+    }
+  }
 };
 
 // event listener adding
@@ -503,17 +457,16 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   if (!exists("config.json")) {
-    config = {
+    userConfig = {
       theme: "default",
       noAnim: false,
       keyBindings: {
-        addGroup: "g",
-        addField: "f",
+        randomize: "r",
       },
     };
-    write("config.json", config);
+    write("config.json", userConfig);
   } else {
-    config = read("config.json", "json");
+    userConfig = read("config.json", "json");
   }
 });
 
@@ -522,15 +475,7 @@ window.addEventListener("keyup", (e) => {
   if (inputFocused) return;
 
   switch (e.key.toLowerCase()) {
-    case config.keyBindings.addGroup: {
-      addGroup();
-      break;
-    }
-    case config.keyBindings.addField: {
-      addField();
-      break;
-    }
-    case config.keyBindings.randomize: {
+    case userConfig.keyBindings.randomize: {
       randomize();
       break;
     }
@@ -543,16 +488,6 @@ window.addEventListener("keyup", (e) => {
 window.addEventListener("click", () => {
   if (menuOpened) menuOpened = false;
   handleMenu();
-});
-
-// adding group field
-addGroupButton.addEventListener("click", () => {
-  addGroup();
-});
-
-// adding field field
-addFieldButton.addEventListener("click", () => {
-  addField();
 });
 
 //save randomization setup to JSON file
@@ -591,3 +526,21 @@ loadResultsButton.addEventListener("click", () => {
 resetButton.addEventListener("click", () => {
   window.location.reload();
 });
+
+fieldsInput.addEventListener("blur", (e) => {
+  checkFieldsDifference();
+});
+
+groupsInput.addEventListener("blur", (e) => {
+  checkGroupsDifference();
+});
+
+fieldsInput.addEventListener("keyup", (e) => {
+  if (e.key === "Enter") checkFieldsDifference();
+});
+
+groupsInput.addEventListener("keyup", (e) => {
+  if (e.key === "Enter") checkGroupsDifference();
+});
+
+handleFocus();

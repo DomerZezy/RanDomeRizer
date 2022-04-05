@@ -5,7 +5,7 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 390,
     height: 630,
-    backgroundColor: "#333333",
+    backgroundColor: "#000",
     frame: false,
     resizable: false,
     webPreferences: {
@@ -74,6 +74,7 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
+
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
