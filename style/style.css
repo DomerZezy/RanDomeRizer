@@ -115,6 +115,11 @@ html {
       -ms-flex-direction: column;
           flex-direction: column;
   opacity: 0;
+  border-width: 1px;
+  border-style: solid;
+  -o-border-image: linear-gradient(270deg, #4F0C5A 0%, #061847 43.75%, #061847 59.9%, #4F0C5A 100%) 30;
+     border-image: -webkit-gradient(linear, right top, left top, from(#4F0C5A), color-stop(43.75%, #061847), color-stop(59.9%, #061847), to(#4F0C5A)) 30;
+     border-image: linear-gradient(270deg, #4F0C5A 0%, #061847 43.75%, #061847 59.9%, #4F0C5A 100%) 30;
 }
 
 .main__settingsMenu > button {
@@ -136,7 +141,7 @@ html {
 
 .main__list {
   width: 100%;
-  height: calc(100% - 122px);
+  height: calc(100% - 136px);
   background-image: url("../assets/background.png");
   overflow-y: auto;
   display: -webkit-box;
@@ -155,46 +160,79 @@ html {
 
 .main__results {
   position: absolute;
-  width: 80%;
-  height: 80vh;
-  top: 10vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  height: calc( 100vh - 80px);
+  top: 80px;
   left: 100vw;
   z-index: 3;
-  background-color: #333;
+  background-image: url("../assets/background.png");
   color: #E8E7FAD9;
   border-radius: 5px;
   overflow-y: auto;
 }
 
+.main__resultsList {
+  height: calc( 100% - 48px);
+  padding-bottom: 24px;
+}
+
 .main__resultsTitle {
-  padding: 8px 0;
-  margin-top: 8px;
+  margin: 24px 0 8px 0;
   text-align: center;
-  background-color: #222;
   font-weight: bold;
 }
 
 .main__resultsResult {
-  font-size: 1.1em;
+  font-size: 16px;
+  width: 192px;
+  height: 24px;
   color: #E8E7FAD9;
-  padding: 4px;
-  background-color: #222;
+  text-align: center;
+  margin: 4px 0;
+  border-left-width: 0;
+  border-right-width: 0;
+  border-top-width: 0;
+  border-bottom-width: 1px;
+  border-style: solid;
+  -o-border-image: linear-gradient(270deg, #4F0C5A 0%, #061847 43.75%, #061847 59.9%, #4F0C5A 100%) 30;
+     border-image: -webkit-gradient(linear, right top, left top, from(#4F0C5A), color-stop(43.75%, #061847), color-stop(59.9%, #061847), to(#4F0C5A)) 30;
+     border-image: linear-gradient(270deg, #4F0C5A 0%, #061847 43.75%, #061847 59.9%, #4F0C5A 100%) 30;
 }
 
-.main__resultsCloseButton {
+.main__resultsButtonsWrap {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
   width: 100%;
-  height: 30px;
-  color: #E8E7FAD9;
-  background-color: #333;
-  font-size: 1.2em;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
-  border: none;
-  cursor: pointer;
+  height: 48px;
+  background-image: -webkit-gradient(linear, right top, left top, from(#4F0C5A), color-stop(43.75%, #061847), color-stop(59.9%, #061847), to(#4F0C5A));
+  background-image: linear-gradient(270deg, #4F0C5A 0%, #061847 43.75%, #061847 59.9%, #4F0C5A 100%);
 }
 
-.main__resultsCloseButton:hover {
-  background-color: #111;
+.main__resultsCloseButton, .main__resultRandomizeButton {
+  width: 50%;
+  height: 48px;
+  color: #E8E7FAD9;
+  font-size: 1.2em;
+  background-color: transparent;
+  cursor: pointer;
+  border: none;
+  -webkit-transition: .3s;
+  transition: .3s;
+}
+
+.main__resultsCloseButton:hover, .main__resultRandomizeButton:hover {
+  background-color: #ffffff0e;
 }
 
 .main__blur {
@@ -208,7 +246,7 @@ html {
 }
 
 .main__randomizeButton {
-  height: 50px;
+  height: 48px;
   width: 100%;
   background-image: -webkit-gradient(linear, right top, left top, from(#4F0C5A), color-stop(43.75%, #061847), color-stop(59.9%, #061847), to(#4F0C5A));
   background-image: linear-gradient(270deg, #4F0C5A 0%, #061847 43.75%, #061847 59.9%, #4F0C5A 100%);
@@ -216,49 +254,6 @@ html {
   color: #E8E7FAD9;
   font-size: 20px;
   cursor: pointer;
-}
-
-.main__group {
-  margin-top: 8px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  width: 100%;
-  height: 40px;
-  background-color: #01010E;
-}
-
-.main__groupName {
-  width: 45%;
-  background-color: #01010E;
-  color: #E8E7FAD9;
-  border: none;
-  outline: none;
-  padding-left: 8px;
-}
-
-.main__groupColor {
-  width: 45%;
-  background-color: #01010E;
-  color: #E8E7FAD9;
-  border: 1px solid black;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
-  outline: none;
-  padding-left: 8px;
-}
-
-.main__removeGroupButton {
-  border: none;
-  background-color: #01010E;
-  color: #E8E7FAD9;
-  cursor: pointer;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
-}
-
-.main__removeGroupButton:hover {
-  background-color: #222;
 }
 
 .main__field {
@@ -311,7 +306,7 @@ html {
       -ms-flex-align: center;
           align-items: center;
   width: 100%;
-  height: 32px;
+  height: 48px;
   border: none;
   background-color: transparent;
   background-color: #01010E;
@@ -331,11 +326,21 @@ html {
   background-image: linear-gradient(270deg, #4F0C5A 0%, #061847 43.75%, #061847 59.9%, #4F0C5A 100%);
 }
 
+.main__loadSetupButton::after {
+  content: "";
+  display: block;
+  width: 100%;
+  min-height: 1px;
+  background-image: -webkit-gradient(linear, right top, left top, from(#4F0C5A), color-stop(43.75%, #061847), color-stop(59.9%, #061847), to(#4F0C5A));
+  background-image: linear-gradient(270deg, #4F0C5A 0%, #061847 43.75%, #061847 59.9%, #4F0C5A 100%);
+}
+
 .main__loadSetupButtonWrap {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   width: 100%;
+  height: 100%;
   -webkit-box-pack: start;
       -ms-flex-pack: start;
           justify-content: flex-start;
@@ -346,6 +351,12 @@ html {
 }
 
 .main__setupTitle {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   width: 20%;
   height: 100%;
   padding-left: 8px;
@@ -361,8 +372,8 @@ html {
   top: 32px;
   left: 0;
   width: 100%;
-  height: 32px;
-  line-height: 32px;
+  height: 48px;
+  line-height: 48px;
   font-size: 20px;
 }
 
@@ -401,7 +412,7 @@ html {
       -ms-flex-pack: justify;
           justify-content: space-between;
   position: absolute;
-  top: 64px;
+  top: 80px;
   left: calc( 50% - 88px);
 }
 
