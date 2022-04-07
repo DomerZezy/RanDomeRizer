@@ -20,6 +20,10 @@ const fieldsList = document.querySelector(".main__fieldsList");
 const randomizeButton = document.querySelector(".main__randomizeButton");
 
 const results = document.querySelector(".main__results");
+const resultsList = document.querySelector(".main__resultsList");
+const resultCloseButton = document.querySelector(
+  ".main__resultRandomizeButton"
+);
 const blur = document.querySelector(".main__blur");
 
 const setup = {
@@ -40,19 +44,20 @@ let menuOpened = false;
 let resultsObject;
 
 // rendering results
-const renderResults = (resultsList) => {
-  results.style.left = "10%";
+const renderResults = (resultsObject) => {
+  results.style.left = "0";
   blur.style.left = "0";
 
-  results.innerHTML = `<button class="main__resultsCloseButton">Close</button>`;
+  resultsList.innerHTML = "";
 
   setup.groups.forEach((group) => {
-    results.innerHTML += `<h2 class="main__resultsTitle" style="color: ${group.groupColor};">${group.groupName}</h2>`;
-    resultsList.forEach((result) => {
+    resultsList.innerHTML += `<h2 class="main__resultsTitle" style="color: ${group.groupColor};">${group.groupName}</h2>`;
+    resultsObject.forEach((result, index) => {
       if (result.group.groupName === group.groupName)
-        results.innerHTML += `<p class="main__resultsResult">${result.field}</p>`;
+        resultsList.innerHTML += `<p class="main__resultsResult">${result.field}</p>`;
     });
   });
+
   document
     .querySelector(".main__resultsCloseButton")
     .addEventListener("click", () => {
@@ -140,6 +145,26 @@ const randomize = () => {
 
   const groups = inputData.groups;
   const fields = inputData.fields;
+
+  if (groups.length <= 0 || fields.length <= 0) {
+    Toastify({
+      text: "Incorrect setup data!",
+      duration: 3000,
+      className: "main__errorToast",
+      gravity: "top",
+      position: "left",
+      stopOnFocus: true,
+      close: true,
+      offset: {
+        y: 10,
+      },
+      style: {
+        background: "#FF0000",
+        maxWidth: "250px",
+      },
+    }).showToast();
+    return;
+  }
 
   const data = {
     type: "RanDomeRizerSetup",
@@ -502,6 +527,10 @@ loadSetupButton.addEventListener("click", () => {
 
 //randomization
 randomizeButton.addEventListener("click", () => {
+  randomize();
+});
+
+resultCloseButton.addEventListener("click", () => {
   randomize();
 });
 

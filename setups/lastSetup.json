@@ -1,35 +1,25 @@
 {
   "type": "RanDomeRizerSetup",
   "fields": [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20"
+    "aaaaaa",
+    "bbbbb",
+    "ccccc",
+    "ddddd",
+    "eeeee",
+    "fffff",
+    "ggggg",
+    "hhhhh",
+    "jjjjjj",
+    "kkkkk"
   ],
   "groups": [
     {
-      "groupName": "Group 1",
-      "groupColor": "#FFFFFF"
+      "groupName": "Team Blue",
+      "groupColor": "#0D8DC3"
     },
     {
-      "groupName": "Group 2",
-      "groupColor": "#FFFFFF"
+      "groupName": "Team Red",
+      "groupColor": "#9A0F11"
     }
   ],
   "config": {
