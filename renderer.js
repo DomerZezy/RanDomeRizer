@@ -3,6 +3,12 @@ const { ipcRenderer } = require("electron"); // needed since remote module got d
 const Toastify = require("toastify-js");
 const Anime = require("animejs");
 
+import {
+  minimizeButtonSvg,
+  closeButtonSvg,
+  settingsButtonSvg,
+} from "./svgModules.js";
+
 // gather all necessary elements
 const settingsButton = document.querySelector(".navBar__settingsButton");
 
@@ -44,15 +50,18 @@ let menuOpened = false;
 let resultsObject;
 
 // rendering results
-const renderResults = (resultsObject) => {
+const renderResults = (resultsObject, resultsGroups) => {
   results.style.left = "0";
   blur.style.left = "0";
 
+  console.log(resultsGroups);
+
   resultsList.innerHTML = "";
 
-  setup.groups.forEach((group) => {
+  resultsGroups.forEach((group) => {
     resultsList.innerHTML += `<h2 class="main__resultsTitle" style="color: ${group.groupColor};">${group.groupName}</h2>`;
     resultsObject.forEach((result, index) => {
+      console.log(result.group.groupName, group.groupName);
       if (result.group.groupName === group.groupName)
         resultsList.innerHTML += `<p class="main__resultsResult">${result.field}</p>`;
     });
@@ -100,6 +109,7 @@ const loadResults = async () => {
 
   if (exists(filePath)) {
     const resultsFile = read(filePath, "json");
+    console.log(resultsFile);
     if (!resultsFile.type || resultsFile.type !== "RanDomeRizerResults") {
       Toastify({
         text: "File is not a result!",
@@ -466,6 +476,10 @@ const checkGroupsDifference = () => {
 window.addEventListener("DOMContentLoaded", () => {
   const minimizeButton = document.querySelector(".navBar__minimizeButton");
   const closeButton = document.querySelector(".navBar__closeButton");
+
+  minimizeButton.innerHTML = minimizeButtonSvg;
+  closeButton.innerHTML = closeButtonSvg;
+  settingsButton.innerHTML = settingsButtonSvg;
 
   minimizeButton.addEventListener("click", () => {
     ipcRenderer.send("min");
