@@ -1,11 +1,21 @@
-@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap")
+// @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap")
 @import ./__variables
+
+@font-face 
+  font-family: Lato
+  src: url("../assets/Lato-Regular.ttf")
+  font-weight: normal
+
+@font-face
+  font-family: Lato 
+  src: url("../assets/Lato-Bold.ttf")
+  font-weight: bold
 
 * 
   padding: 0
   margin: 0
   box-sizing: border-box
-  font-family: "Lato", Arial, Helvetica, sans-serif
+  font-family: Lato, Arial, Helvetica, sans-serif
 
 html 
   overflow-x: hidden
@@ -293,7 +303,12 @@ html
   cursor: pointer
   color: $primaryText
   font-weight: bold
-  padding: 0 4px 0 8px
+  &--less
+    padding: 0 4px 0 8px
+  &--greater
+    padding: 0 8px 0 4px
+  & > svg
+    pointer-events: none
 
 .main__settingsInputWrap
   display: flex
@@ -320,7 +335,7 @@ html
   width: 20px
   height: 100%
   background-color: transparent
-  font-size: 16px
+  line-height: 20px
   border: none
   color: $primaryText
   text-align: center

@@ -75,6 +75,51 @@ const renderResults = (resultsObject, resultsGroups) => {
     });
 };
 
+const handleInputChange = (button) => {
+  let inputChange;
+  let operation;
+
+  button.target.classList.forEach((className) => {
+    switch (className) {
+      case "main__fieldsSettingsInputButton": {
+        inputChange = "fields";
+        break;
+      }
+      case "main__groupsSettingsInputButton": {
+        inputChange = "groups";
+        break;
+      }
+      case "main__settingsInputButton--greater": {
+        operation = "increment";
+        break;
+      }
+      case "main__settingsInputButton--less": {
+        operation = "decrement";
+        break;
+      }
+    }
+  });
+
+  if (inputChange === "fields") {
+    if (operation === "increment") {
+      fieldsInput.value = parseInt(fieldsInput.value) + 1;
+    } else {
+      if (parseInt(fieldsInput.value) === 0) return;
+      fieldsInput.value = parseInt(fieldsInput.value) - 1;
+    }
+  } else {
+    if (operation === "increment") {
+      groupsInput.value = parseInt(groupsInput.value) + 1;
+    } else {
+      if (parseInt(groupsInput.value) === 0) return;
+      groupsInput.value = parseInt(groupsInput.value) - 1;
+    }
+  }
+
+  checkFieldsDifference();
+  checkGroupsDifference();
+};
+
 const handleChange = () => {
   const fields = document.querySelectorAll(".main__fieldName");
 
@@ -482,6 +527,9 @@ window.addEventListener("DOMContentLoaded", () => {
   settingsButton.innerHTML = settingsButtonSvg;
 
   settingsInputButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      handleInputChange(e);
+    });
     button.classList.forEach((arg) => {
       if (arg === "main__settingsInputButton--less")
         button.innerHTML = lessThanSvg;

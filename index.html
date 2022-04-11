@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; child-src 'none'; style-src *;"
+    />
     <link rel="stylesheet" href="./style/style.css" />
     <link
       rel="stylesheet"
@@ -83,7 +87,6 @@
       <button class="main__saveSetupButton">Save setup</button>
       <button class="main__saveResultsButton">Save results</button>
       <button class="main__loadResultsButton">Load results</button>
-      <button class="main__settingsButton">Settings</button>
       <button class="main__resetButton">Reset</button>
     </div>
   </body>

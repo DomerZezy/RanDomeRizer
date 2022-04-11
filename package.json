@@ -10,6 +10,7 @@
   },
   "type": "module",
   "author": "DomerZezy",
+  "repository": "https://github.com/DomerZezy/RanDomeRizer",
   "license": "MIT",
   "dependencies": {
     "adm-zip": "^0.5.9",
