@@ -79,6 +79,7 @@ html
   width: 200px
   flex-direction: column
   opacity: 0
+  z-index: 4
   border-width: 1px
   border-style: solid
   border-image: $primaryGradient 30
@@ -164,15 +165,6 @@ html
 
 .main__resultsCloseButton:hover, .main__resultRandomizeButton:hover
   background-color: #ffffff0e
-
-.main__blur 
-  position: absolute
-  width: 100%
-  height: 100vh
-  top: 0
-  left: 100vw
-  z-index: 2
-  background-color: rgba(0, 0, 0, 0.5)
 
 .main__randomizeButton
   height: 48px
@@ -287,13 +279,33 @@ html
 
 .main__setupSettings
   display: flex
-  width: 176px
+  width: 240px
   height: 40px
   align-items: center
   justify-content: space-between
   position: absolute
   top: 80px
-  left: calc( 50% - 88px )
+  left: calc( 50% - 120px )
+
+.main__settingsInputButton
+  border: none
+  background-color: transparent
+  cursor: pointer
+  color: $primaryText
+  font-weight: bold
+  padding: 0 4px 0 8px
+
+.main__settingsInputWrap
+  display: flex
+  align-items: center
+  justify-content: space-between
+  width: 56px
+  height: 24px
+  border: double 2px transparent
+  background: linear-gradient($backgroundColor, $backgroundColor), $primaryGradient
+  background-origin: border-box
+  background-clip: content-box, border-box
+  border-radius: 30px
 
 .main__fieldsList
   padding: 16px 0
@@ -307,7 +319,6 @@ html
 .main__fieldsSettingsInput, .main__groupsSettingsInput
   width: 20px
   height: 100%
-  margin-left: 8px
   background-color: transparent
   font-size: 16px
   border: none
@@ -325,7 +336,7 @@ html
     -moz-appearance: textfield
 
 .main__fieldsSettingsWrap, .main__groupsSettingsWrap
-  min-width: 70px
+  min-width: 120px
   height: 100%
   display: flex
   justify-content: space-around

@@ -32,22 +32,38 @@
         <span class="main__setupSettingsTitle">Settings:</span>
         <div class="main__setupSettings">
           <div class="main__fieldsSettingsWrap">
-            <span class="main__fieldsSettingsTitle">Fields:</span
-            ><input
-              type="number"
-              class="main__fieldsSettingsInput"
-              value="0"
-              min="0"
-            />
+            <span class="main__fieldsSettingsTitle">Fields:</span>
+            <div class="main__settingsInputWrap">
+              <button
+                class="main__settingsInputButton main__fieldsSettingsInputButton main__settingsInputButton--less"
+              ></button>
+              <input
+                type="number"
+                class="main__fieldsSettingsInput"
+                value="0"
+                min="0"
+              />
+              <button
+                class="main__settingsInputButton main__fieldsSettingsInputButton main__settingsInputButton--greater"
+              ></button>
+            </div>
           </div>
           <div class="main__groupsSettingsWrap">
-            <span class="main__groupsSettingsTitle">Groups:</span
-            ><input
-              type="number"
-              class="main__groupsSettingsInput"
-              value="0"
-              min="0"
-            />
+            <span class="main__groupsSettingsTitle">Groups:</span>
+            <div class="main__settingsInputWrap">
+              <button
+                class="main__settingsInputButton main__groupsSettingsInputButton main__settingsInputButton--less"
+              ></button>
+              <input
+                type="number"
+                class="main__groupsSettingsInput"
+                value="0"
+                min="0"
+              />
+              <button
+                class="main__settingsInputButton main__groupsSettingsInputButton main__settingsInputButton--greater"
+              ></button>
+            </div>
           </div>
         </div>
       </div>
@@ -63,11 +79,11 @@
         <button class="main__resultRandomizeButton">Randomize</button>
       </div>
     </div>
-    <div class="main__blur"></div>
     <div class="main__settingsMenu">
       <button class="main__saveSetupButton">Save setup</button>
       <button class="main__saveResultsButton">Save results</button>
       <button class="main__loadResultsButton">Load results</button>
+      <button class="main__settingsButton">Settings</button>
       <button class="main__resetButton">Reset</button>
     </div>
   </body>

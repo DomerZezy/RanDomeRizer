@@ -1,0 +1,16 @@
+{
+  "type": "RanDomeRizerSetup",
+  "fields": [
+    "1"
+  ],
+  "groups": [
+    {
+      "groupName": "Group 1",
+      "groupColor": "#FFFFFF"
+    }
+  ],
+  "config": {
+    "visibility": [],
+    "title": "Last setup"
+  }
+}

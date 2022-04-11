@@ -7,6 +7,8 @@ import {
   minimizeButtonSvg,
   closeButtonSvg,
   settingsButtonSvg,
+  lessThanSvg,
+  greaterThanSvg,
 } from "./svgModules.js";
 
 // gather all necessary elements
@@ -24,13 +26,15 @@ const groupsInput = document.querySelector(".main__groupsSettingsInput");
 const loadSetupButton = document.querySelector(".main__loadSetupButton");
 const fieldsList = document.querySelector(".main__fieldsList");
 const randomizeButton = document.querySelector(".main__randomizeButton");
+const settingsInputButtons = document.querySelectorAll(
+  ".main__settingsInputButton"
+);
 
 const results = document.querySelector(".main__results");
 const resultsList = document.querySelector(".main__resultsList");
 const resultCloseButton = document.querySelector(
   ".main__resultRandomizeButton"
 );
-const blur = document.querySelector(".main__blur");
 
 const setup = {
   groups: [],
@@ -52,9 +56,6 @@ let resultsObject;
 // rendering results
 const renderResults = (resultsObject, resultsGroups) => {
   results.style.left = "0";
-  blur.style.left = "0";
-
-  console.log(resultsGroups);
 
   resultsList.innerHTML = "";
 
@@ -71,7 +72,6 @@ const renderResults = (resultsObject, resultsGroups) => {
     .querySelector(".main__resultsCloseButton")
     .addEventListener("click", () => {
       results.style.left = "100%";
-      blur.style.left = "100%";
     });
 };
 
@@ -481,6 +481,15 @@ window.addEventListener("DOMContentLoaded", () => {
   closeButton.innerHTML = closeButtonSvg;
   settingsButton.innerHTML = settingsButtonSvg;
 
+  settingsInputButtons.forEach((button) => {
+    button.classList.forEach((arg) => {
+      if (arg === "main__settingsInputButton--less")
+        button.innerHTML = lessThanSvg;
+      if (arg === "main__settingsInputButton--greater")
+        button.innerHTML = greaterThanSvg;
+    });
+  });
+
   minimizeButton.addEventListener("click", () => {
     ipcRenderer.send("min");
   });
@@ -492,7 +501,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
   closeResultsButton.addEventListener("click", () => {
     results.style.left = "100%";
-    blur.style.left = "100%";
   });
 
   if (!exists("config.json")) {

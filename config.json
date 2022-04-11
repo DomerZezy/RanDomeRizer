@@ -2,8 +2,6 @@
   "theme": "default",
   "noAnim": false,
   "keyBindings": {
-    "addGroup": "g",
-    "addField": "f",
     "randomize": "r"
   }
 }

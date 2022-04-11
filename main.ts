@@ -1,8 +1,12 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const { remove } = require("fs-jetpack");
 
+const isDuplicatedInstance = app.requestSingleInstanceLock();
+
+let win = null;
+
 const createWindow = () => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 390,
     height: 630,
     backgroundColor: "#000",
@@ -66,6 +70,18 @@ const createWindow = () => {
     return file;
   });
 };
+
+// for v1.0.0-global
+// if (!isDuplicatedInstance) {
+//   app.quit();
+// } else {
+//   app.on("second-instance", () => {
+//     if (win) {
+//       if (win.isMinimized()) win.restore();
+//       win.focus();
+//     }
+//   });
+// }
 
 app.whenReady().then(() => {
   createWindow();

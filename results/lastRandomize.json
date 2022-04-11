@@ -1,0 +1,18 @@
+{
+  "type": "RanDomeRizerResults",
+  "results": [
+    {
+      "group": {
+        "groupName": "Group 1",
+        "groupColor": "#FFFFFF"
+      },
+      "field": "1"
+    }
+  ],
+  "groups": [
+    {
+      "groupName": "Group 1",
+      "groupColor": "#FFFFFF"
+    }
+  ]
+}
