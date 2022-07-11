@@ -3,7 +3,7 @@ const { remove } = require("fs-jetpack");
 
 const isDuplicatedInstance = app.requestSingleInstanceLock();
 
-let win = null;
+let win;
 
 const createWindow = () => {
   win = new BrowserWindow({
@@ -15,12 +15,12 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      devTools: false,
+      // devTools: false,
     },
   });
 
   win.loadFile("index.html");
-  // win.webContents.openDevTools({ mode: "detach" });
+  win.webContents.openDevTools({ mode: "detach" });
   app.on("ready", () => {
     win.show();
   });
