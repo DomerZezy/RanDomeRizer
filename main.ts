@@ -20,7 +20,8 @@ const createWindow = () => {
   });
 
   win.loadFile("mainMenu.html");
-  // win.webContents.openDevTools({ mode: "detach" });
+  if(isDev()) win.webContents.openDevTools({ mode: "detach" });
+
   app.on("ready", () => {
     win.show();
   });

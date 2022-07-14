@@ -102,6 +102,12 @@ const handleInputChange = (button) => {
   });
 
   if (inputChange === "fields") {
+    if (
+      setup.config.visibility &&
+      setup.config.visibility.some((x) => x === "staticFields")
+    ) {
+      return;
+    }
     if (operation === "increment") {
       fieldsInput.value = parseInt(fieldsInput.value) + 1;
     } else {
@@ -109,6 +115,12 @@ const handleInputChange = (button) => {
       fieldsInput.value = parseInt(fieldsInput.value) - 1;
     }
   } else {
+    if (
+      setup.config.visibility &&
+      setup.config.visibility.some((x) => x === "staticGroups")
+    ) {
+      return;
+    }
     if (operation === "increment") {
       groupsInput.value = parseInt(groupsInput.value) + 1;
     } else {
