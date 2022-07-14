@@ -15,12 +15,13 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      // devTools: false,
+      devTools: isDev(),
     },
   });
 
-  win.loadFile("index.html");
-  win.webContents.openDevTools({ mode: "detach" });
+  win.loadFile("mainMenu.html");
+  if(isDev()) win.webContents.openDevTools({ mode: "detach" });
+
   app.on("ready", () => {
     win.show();
   });
@@ -30,7 +31,32 @@ const createWindow = () => {
   });
 
   ipcMain.on("close", () => {
-    win.close();
+    const allWindows = BrowserWindow.getAllWindows();
+    allWindows.forEach((window) => window.close());
+  });
+
+  ipcMain.on("openCreator", () => {
+    const creatorWin = new BrowserWindow({
+      width: 400,
+      height: 430,
+      backgroundColor: "#000",
+      frame: false,
+      resizable: false,
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false,
+        devTools: isDev(),
+      },
+    });
+    creatorWin.loadFile("./setupCreator/index.html");
+    creatorWin.show();
+    ipcMain.on("minAdditional", () => {
+      creatorWin.minimize();
+    });
+
+    ipcMain.on("closeAdditional", () => {
+      creatorWin.close();
+    });
   });
 
   ipcMain.handle("openSetupFile", async () => {
@@ -95,3 +121,7 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
+
+const isDev = () => {
+  return process.argv[2] === "--dev";
+};

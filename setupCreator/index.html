@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; child-src 'none'; style-src *;"
+    />
+    <link rel="stylesheet" href="./style/style.css" />
+    <title>RDR Setup Creator</title>
+  </head>
+  <body>
+    <div class="titleBar">
+      <div class="titleBar__dragArea">
+        <p class="titleBar__title">RDR Setup Creator</p>
+      </div>
+      <div class="titleBar__buttonsWrap">
+        <button class="titleBar__minimizeButton"></button>
+        <button class="titleBar__closeButton"></button>
+      </div>
+    </div>
+    <div class="index">
+      <button class="index__editSetup">Edit setup</button>
+      <h2 class="index__header">Fields/Groups Config</h2>
+      <input
+        type="number"
+        class="index__fieldsAmount"
+        placeholder="Fields amount"
+      />
+      <input
+        type="number"
+        class="index__groupsAmount"
+        placeholder="Groups amount"
+      />
+      <h2 class="index__header">Names config</h2>
+      <input
+        type="text"
+        class="index__setupName"
+        placeholder="Setup name(optional)"
+      />
+      <input
+        type="text"
+        class="index__placeholderName"
+        placeholder="Fields placeholder text(optional)"
+      />
+      <h2 class="index__header">Optional config</h2>
+      <input type="checkbox" class="index__checkbox" name="staticFields" />
+      <span class="index__checkboxText">Static fields?</span>
+
+      <input type="checkbox" class="index__checkbox" name="staticGroups" />
+      <span class="index__checkboxText">Static groups?</span>
+
+      <input
+        type="checkbox"
+        class="index__checkbox"
+        name="doNotRenderFields"
+      /><span class="index__checkboxText">Do not render fields?</span>
+      <input
+        type="checkbox"
+        name="renderLimitedResults"
+        class="index__checkbox"
+      /><span class="index__checkboxText">Render limited results?</span
+      ><input
+        type="number"
+        class="index__showLimitedFields"
+        placeholder="How much results to show?"
+      />
+      <button class="index__generateSetup">Generate</button>
+    </div>
+  </body>
+  <script src="./creator.js" type="module"></script>
+</html>

@@ -1,0 +1,57 @@
+@import url("../../assets/Lato-Bold.ttf")
+@import url("../../assets/Lato-Regular.ttf")
+    
+*
+    padding: 0
+    margin: 0
+    box-sizing: border-box
+    font-family: Lato, Arial, Helvetica, sans-serif
+
+.index
+    width: 100%
+    height: 400px
+    display: flex
+    flex-direction: column
+    align-items: center
+    background-color: #ccc
+
+.titleBar
+    width: 100%
+    height: 30px
+    background-color: #333
+    display: flex
+
+.titleBar__title
+    color: #FFF
+    font-weight: bold
+
+.titleBar__dragArea
+    display: flex
+    padding-left: 8px
+    align-items: center
+    -webkit-app-region: drag
+    width: calc( 100% - 84px )
+    height: 100%
+
+
+.titleBar__buttonsWrap
+    display: flex
+    height: 100%
+    width: 84px
+    justify-content: space-between
+    padding: 0 8px
+    & > button
+        width: 30px
+        height: 100%
+        border: none
+        background-color: #333
+        transition: .3s
+        cursor: pointer
+        color: white
+
+.titleBar__minimizeButton:hover
+    background-color: #444
+
+.titleBar__closeButton:hover
+    background-color: #f11 
+            

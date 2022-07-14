@@ -1,0 +1,32 @@
+@import "./__variables"
+
+.mainMenu
+    display: flex
+    justify-content: center
+    align-items: center
+    width: 100%
+    height: calc( 100vh - 32px )
+    
+.mainMenu__buttonsWrap
+    width: 100%
+    height: 60%
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: space-around
+
+.mainMenu__button
+    height: 64px
+    width: 100%
+    background-color: transparent
+    cursor: pointer
+    transition: .3s
+    text-decoration: none
+    color: #fff
+    line-height: 64px
+    text-align: center
+    border-width: 1px
+    border-style: solid
+    border-image: $primaryGradient 30
+    &:hover
+        background-color: #222

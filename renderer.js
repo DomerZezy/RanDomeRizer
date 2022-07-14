@@ -19,6 +19,7 @@ const saveSetupButton = document.querySelector(".main__saveSetupButton");
 const saveResultsButton = document.querySelector(".main__saveResultsButton");
 const loadResultsButton = document.querySelector(".main__loadResultsButton");
 const resetButton = document.querySelector(".main__resetButton");
+const menuButton = document.querySelector(".main__menuButton");
 
 const fieldsInput = document.querySelector(".main__fieldsSettingsInput");
 const groupsInput = document.querySelector(".main__groupsSettingsInput");
@@ -636,6 +637,10 @@ loadResultsButton.addEventListener("click", () => {
 
 resetButton.addEventListener("click", () => {
   window.location.reload();
+});
+
+menuButton.addEventListener("click", () => {
+  window.location.replace("./mainMenu.html");
 });
 
 fieldsInput.addEventListener("blur", (e) => {
